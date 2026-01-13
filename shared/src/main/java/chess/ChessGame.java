@@ -12,7 +12,7 @@ public class ChessGame {
 
     private TeamColor currentTeam;
 
-    public ChessGame(TeamColor currentTeam) {
+    public ChessGame() {
         this.currentTeam = TeamColor.WHITE;
     }
 
