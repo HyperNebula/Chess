@@ -13,14 +13,14 @@ public class ChessGame {
     private TeamColor currentTeam;
 
     public ChessGame() {
-        this.currentTeam = TeamColor.WHITE;
+        currentTeam = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return this.currentTeam;
+        return currentTeam;
     }
 
     /**
@@ -30,7 +30,7 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
 
-        this.currentTeam = team;
+        currentTeam = team;
 
     }
 
