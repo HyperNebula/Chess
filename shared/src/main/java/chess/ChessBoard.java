@@ -14,7 +14,7 @@ public class ChessBoard {
     private ChessPiece[][] chessBoard;
 
     public ChessBoard() {
-        chessBoard = new ChessPiece[8][8];
+        chessBoard = new ChessPiece[9][9];
     }
 
     /**
@@ -48,7 +48,7 @@ public class ChessBoard {
      */
     public void resetBoard() {
 
-        chessBoard = new ChessPiece[8][8];
+        chessBoard = new ChessPiece[9][9];
 
     }
 
