@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import chess.piecemoves.bishopMove;
 import chess.piecemoves.pawnMove;
+import chess.piecemoves.queenMove;
 
 /**
  * Represents a single chess piece
@@ -83,6 +84,9 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if (pieceType == PieceType.BISHOP) {
             return bishopMove.bishopMoveSet(board, pieceColor, myPosition);
+        }
+        if (pieceType == PieceType.QUEEN) {
+        return queenMove.queenMoveSet(board, pieceColor, myPosition);
         }
         //if (pieceType == PieceType.PAWN) {
         //    return pawnMove.pawnMoveSet();
