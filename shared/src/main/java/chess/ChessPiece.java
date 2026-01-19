@@ -3,6 +3,9 @@ package chess;
 import java.util.Collection;
 import java.util.Objects;
 
+import chess.piecemoves.bishopMove;
+import chess.piecemoves.pawnMove;
+
 /**
  * Represents a single chess piece
  * <p>
@@ -33,6 +36,11 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(pieceColor, getPieceType());
+    }
+
+    @Override
+    public String toString() {
+        return "" + pieceColor + pieceType;
     }
 
     /**
@@ -73,6 +81,12 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        if (pieceType == PieceType.BISHOP) {
+            return bishopMove.bishopMoveSet(board, pieceColor, myPosition);
+        }
+        //if (pieceType == PieceType.PAWN) {
+        //    return pawnMove.pawnMoveSet();
+        //}
+        return java.util.List.of();
     }
 }
