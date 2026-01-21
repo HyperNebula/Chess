@@ -45,6 +45,10 @@ public class ChessPosition {
         this.col += coli;
     }
 
+    public boolean positionWithinBoard() {
+        return (0 < row) && (row < 9) && (0 < col) && (col < 9);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
