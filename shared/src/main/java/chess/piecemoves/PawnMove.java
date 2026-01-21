@@ -18,30 +18,30 @@ public class PawnMove {
             rowUpdate = -1;
         }
 
-        ChessPosition positionCheck = new ChessPosition(myPosition.getRow(), myPosition.getColumn() + rowUpdate);
+        ChessPosition positionCheck = new ChessPosition(myPosition.getRow() + rowUpdate, myPosition.getColumn());
         if (board.getPiece(positionCheck) == null) {
             moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
 
-            positionCheck.updatePosition(0, rowUpdate);
+            positionCheck.updatePosition(rowUpdate, 0);
             if (myPosition.getRow() == 2 || board.getPiece(positionCheck) == null) {
                 moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
             }
-            positionCheck.updatePosition(0, -rowUpdate);
+            positionCheck.updatePosition(-rowUpdate, 0);
 
         }
-        if (myPosition.getRow() < 8) {
-            positionCheck.updatePosition(1, 0);
+        if (myPosition.getColumn() < 8) {
+            positionCheck.updatePosition(0, 1);
             if (board.getPiece(positionCheck) != null && board.getPiece(positionCheck).getTeamColor() != color) {
                 moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
             }
-            positionCheck.updatePosition(-1, 0);
+            positionCheck.updatePosition(0, -1);
         }
-        if (myPosition.getRow() > 0) {
-            positionCheck.updatePosition(-1, 0);
+        if (myPosition.getColumn() > 1) {
+            positionCheck.updatePosition(0, -1);
             if (board.getPiece(positionCheck) != null && board.getPiece(positionCheck).getTeamColor() != color) {
                 moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
             }
-            positionCheck.updatePosition(1, 0);
+            positionCheck.updatePosition(0, 1);
         }
 
         return moveList;
