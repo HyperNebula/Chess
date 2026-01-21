@@ -29,20 +29,21 @@ public class PawnMove {
             positionCheck.updatePosition(-rowUpdate, 0);
 
         }
-        if (myPosition.getColumn() < 8) {
-            positionCheck.updatePosition(0, 1);
+        positionCheck.updatePosition(0, 1);
+        if (myPosition.positionWithinBoard()) {
             if (board.getPiece(positionCheck) != null && board.getPiece(positionCheck).getTeamColor() != color) {
                 moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
             }
-            positionCheck.updatePosition(0, -1);
         }
-        if (myPosition.getColumn() > 1) {
-            positionCheck.updatePosition(0, -1);
+
+        positionCheck.updatePosition(0, -2);
+
+        if (myPosition.positionWithinBoard()) {
             if (board.getPiece(positionCheck) != null && board.getPiece(positionCheck).getTeamColor() != color) {
                 moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
             }
-            positionCheck.updatePosition(0, 1);
         }
+        positionCheck.updatePosition(0, 1);
 
         return moveList;
     }
