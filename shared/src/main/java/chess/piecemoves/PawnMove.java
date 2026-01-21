@@ -5,7 +5,7 @@ import chess.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class pawnMove {
+public class PawnMove {
 
     public static List<ChessMove> pawnMoveSet(ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition, ChessPiece.PieceType promotionPiece)  {
 

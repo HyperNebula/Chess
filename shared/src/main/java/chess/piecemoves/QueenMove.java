@@ -8,7 +8,7 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.List;
 
-public class queenMove {
+public class QueenMove {
 
     public static List<ChessMove> queenMoveSet(ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition) {
 

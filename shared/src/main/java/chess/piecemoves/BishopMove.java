@@ -1,20 +1,17 @@
 package chess.piecemoves;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public class rookMove {
+public class BishopMove {
 
-    public static List<ChessMove> rookMoveSet(ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition) {
+    public static List<ChessMove> bishopMoveSet(ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition) {
 
         List<ChessMove> moveList = new ArrayList<>();
 
-        int[][] updateArray = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+        int[][] updateArray = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
         for (int[] updatePos: updateArray) {
 

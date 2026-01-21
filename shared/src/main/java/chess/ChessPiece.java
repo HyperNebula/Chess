@@ -3,10 +3,10 @@ package chess;
 import java.util.Collection;
 import java.util.Objects;
 
-import chess.piecemoves.bishopMove;
-import chess.piecemoves.pawnMove;
-import chess.piecemoves.queenMove;
-import chess.piecemoves.rookMove;
+import chess.piecemoves.BishopMove;
+import chess.piecemoves.PawnMove;
+import chess.piecemoves.QueenMove;
+import chess.piecemoves.RookMove;
 
 /**
  * Represents a single chess piece
@@ -84,16 +84,16 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if (pieceType == PieceType.BISHOP) {
-            return bishopMove.bishopMoveSet(board, pieceColor, myPosition);
+            return BishopMove.bishopMoveSet(board, pieceColor, myPosition);
         }
         if (pieceType == PieceType.QUEEN) {
-        return queenMove.queenMoveSet(board, pieceColor, myPosition);
+        return QueenMove.queenMoveSet(board, pieceColor, myPosition);
         }
         if (pieceType == PieceType.ROOK) {
-            return rookMove.rookMoveSet(board, pieceColor, myPosition);
+            return RookMove.rookMoveSet(board, pieceColor, myPosition);
         }
         if (pieceType == PieceType.PAWN) {
-            return pawnMove.pawnMoveSet(board, pieceColor, myPosition, null);
+            return PawnMove.pawnMoveSet(board, pieceColor, myPosition, null);
         }
         return java.util.List.of();
     }
