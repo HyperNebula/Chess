@@ -58,6 +58,10 @@ public class ChessPosition {
         return getRow() == that.getRow() && col == that.col;
     }
 
+    public ChessPosition copy() {
+        return new ChessPosition(row, col);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(getRow(), col);
