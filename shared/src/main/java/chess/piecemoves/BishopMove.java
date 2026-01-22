@@ -3,7 +3,6 @@ package chess.piecemoves;
 import chess.*;
 
 import java.util.List;
-import java.util.ArrayList;
 
 public class BishopMove {
 
@@ -11,7 +10,7 @@ public class BishopMove {
 
         int[][] updateArray = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-        return DirectionalMove.generateMoveList(updateArray, board, color, myPosition);
+        return MoveListCalculator.generateMoveListQRB(updateArray, board, color, myPosition);
 
     }
 

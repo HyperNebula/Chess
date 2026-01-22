@@ -95,6 +95,9 @@ public class ChessPiece {
         if (pieceType == PieceType.KING) {
             return KingMove.kingMoveSet(board, pieceColor, myPosition);
         }
+        if (pieceType == PieceType.KNIGHT) {
+            return KnightMove.knightMoveSet(board, pieceColor, myPosition);
+        }
         return java.util.List.of();
     }
 }

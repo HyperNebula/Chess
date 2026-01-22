@@ -5,7 +5,6 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class QueenMove {
@@ -14,7 +13,7 @@ public class QueenMove {
 
         int[][] updateArray = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}};
 
-        return DirectionalMove.generateMoveList(updateArray, board, color, myPosition);
+        return MoveListCalculator.generateMoveListQRB(updateArray, board, color, myPosition);
 
     }
 
