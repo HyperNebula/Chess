@@ -48,17 +48,27 @@ public class ChessBoard {
      */
     public void resetBoard() {
 
-        chessBoard = new ChessPiece[][]{
-                {new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK)},
-                {new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN)},
-                {null, null,  null, null, null, null, null, null},
-                {null, null,  null, null, null, null, null, null},
-                {null, null,  null, null, null, null, null, null},
-                {null, null,  null, null, null, null, null, null},
-                {new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN)},
-                {new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK)}
-        };
+        chessBoard = new ChessPiece[8][8];
 
+        setupRow(0, ChessGame.TeamColor.WHITE);
+        setupRow(7, ChessGame.TeamColor.BLACK);
+
+        for (int col = 0; col < 8; col++) {
+            chessBoard[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            chessBoard[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        }
+
+    }
+
+    private void setupRow(int row, ChessGame.TeamColor color) {
+        chessBoard[row][0] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+        chessBoard[row][1] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+        chessBoard[row][2] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+        chessBoard[row][3] = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
+        chessBoard[row][4] = new ChessPiece(color, ChessPiece.PieceType.KING);
+        chessBoard[row][5] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
+        chessBoard[row][6] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
+        chessBoard[row][7] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
     }
 
     @Override
