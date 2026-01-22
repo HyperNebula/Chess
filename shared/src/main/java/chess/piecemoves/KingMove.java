@@ -12,8 +12,6 @@ public class KingMove {
 
     public static List<ChessMove> kingMoveSet(ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition) {
 
-        List<ChessMove> moveList = new ArrayList<>();
-
         int[][] directions = {{1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}};
 
         return MoveListCalculator.generateMoveListKK(directions, board, color, myPosition);
