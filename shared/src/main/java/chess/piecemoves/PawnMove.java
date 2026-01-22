@@ -23,16 +23,16 @@ public class PawnMove {
         } else {
             rowUpdate = -1;
             startRow = 7;
+            promotionRow = 1;
         }
 
         ChessPosition positionCheck = new ChessPosition(myPosition.getRow() + rowUpdate, myPosition.getColumn());
         if (board.getPiece(positionCheck) == null) {
-            if
-            moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
+            addMoves(moveList, myPosition, positionCheck.copy(), promotionRow);
 
             positionCheck.updatePosition(rowUpdate, 0);
             if (myPosition.getRow() == startRow && board.getPiece(positionCheck) == null) {
-                moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
+                addMoves(moveList, myPosition, positionCheck.copy(), promotionRow);
             }
             positionCheck.updatePosition(-rowUpdate, 0);
 
@@ -40,7 +40,7 @@ public class PawnMove {
         positionCheck.updatePosition(0, 1);
         if (positionCheck.positionWithinBoard()) {
             if (board.getPiece(positionCheck) != null && board.getPiece(positionCheck).getTeamColor() != color) {
-                moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
+                addMoves(moveList, myPosition, positionCheck.copy(), promotionRow);
             }
         }
 
@@ -48,12 +48,23 @@ public class PawnMove {
 
         if (positionCheck.positionWithinBoard()) {
             if (board.getPiece(positionCheck) != null && board.getPiece(positionCheck).getTeamColor() != color) {
-                moveList.add(new ChessMove(myPosition, new ChessPosition(positionCheck.getRow(), positionCheck.getColumn()), promotionPiece));
+                addMoves(moveList, myPosition, positionCheck.copy(), promotionRow);
             }
         }
         positionCheck.updatePosition(0, 1);
 
         return moveList;
+    }
+
+    private static void addMoves(List<ChessMove> moveList, ChessPosition start, ChessPosition end, int promotionRow) {
+        if (end.getRow() == promotionRow) {
+            moveList.add(new ChessMove(start, end, ChessPiece.PieceType.QUEEN));
+            moveList.add(new ChessMove(start, end, ChessPiece.PieceType.ROOK));
+            moveList.add(new ChessMove(start, end, ChessPiece.PieceType.BISHOP));
+            moveList.add(new ChessMove(start, end, ChessPiece.PieceType.KNIGHT));
+        } else {
+            moveList.add(new ChessMove(start, end, null));
+        }
     }
 
 }

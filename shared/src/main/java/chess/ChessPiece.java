@@ -93,7 +93,7 @@ public class ChessPiece {
             return RookMove.rookMoveSet(board, pieceColor, myPosition);
         }
         if (pieceType == PieceType.PAWN) {
-            return PawnMove.pawnMoveSet(board, pieceColor, myPosition, null);
+            return PawnMove.pawnMoveSet(board, pieceColor, myPosition);
         }
         return java.util.List.of();
     }
