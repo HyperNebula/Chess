@@ -16,15 +16,7 @@ public class KingMove {
 
         int[][] directions = {{1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}};
 
-        for (int[] moveDirection : directions) {
-            ChessPosition nextPosition = new ChessPosition(myPosition.getRow() + moveDirection[0], myPosition.getColumn() + moveDirection[1]);
-
-            if (nextPosition.positionWithinBoard() && (board.getPiece(nextPosition) == null || board.getPiece(nextPosition).getTeamColor() != color)) {
-                moveList.add(new ChessMove(myPosition, nextPosition, null));
-            }
-        }
-
-        return moveList;
+        return MoveListCalculator.generateMoveListKK(directions, board, color, myPosition);
 
     }
 

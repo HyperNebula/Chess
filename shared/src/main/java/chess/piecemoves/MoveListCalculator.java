@@ -8,9 +8,9 @@ import chess.ChessPosition;
 import java.util.List;
 import java.util.ArrayList;
 
-public class DirectionalMove {
+public class MoveListCalculator {
 
-    public static List<ChessMove> generateMoveList(int[][] updateArray, ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition) {
+    public static List<ChessMove> generateMoveListQRB(int[][] updateArray, ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition) {
 
         List<ChessMove> moveList = new ArrayList<>();
 
@@ -37,6 +37,21 @@ public class DirectionalMove {
 
         return moveList;
 
+    }
+
+    public static List<ChessMove> generateMoveListKK(int[][] directions, ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition) {
+
+        List<ChessMove> moveList = new ArrayList<>();
+
+        for (int[] moveDirection : directions) {
+            ChessPosition nextPosition = new ChessPosition(myPosition.getRow() + moveDirection[0], myPosition.getColumn() + moveDirection[1]);
+
+            if (nextPosition.positionWithinBoard() && (board.getPiece(nextPosition) == null || board.getPiece(nextPosition).getTeamColor() != color)) {
+                moveList.add(new ChessMove(myPosition, nextPosition, null));
+            }
+        }
+
+        return moveList;
     }
 
 }
