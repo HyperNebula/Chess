@@ -10,7 +10,6 @@ public class PawnMove {
     public static List<ChessMove> pawnMoveSet(ChessBoard board, ChessGame.TeamColor color, ChessPosition myPosition)  {
 
         List<ChessMove> moveList = new ArrayList<>();
-        ChessPiece.PieceType[] promotionPieces = {ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.BISHOP};
 
         int rowUpdate;
         int startRow;
