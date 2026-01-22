@@ -46,7 +46,8 @@ public class MoveListCalculator {
         for (int[] moveDirection : directions) {
             ChessPosition nextPosition = new ChessPosition(myPosition.getRow() + moveDirection[0], myPosition.getColumn() + moveDirection[1]);
 
-            if (nextPosition.positionWithinBoard() && (board.getPiece(nextPosition) == null || board.getPiece(nextPosition).getTeamColor() != color)) {
+            if (nextPosition.positionWithinBoard()
+                    && (board.getPiece(nextPosition) == null || board.getPiece(nextPosition).getTeamColor() != color)) {
                 moveList.add(new ChessMove(myPosition, nextPosition, null));
             }
         }
