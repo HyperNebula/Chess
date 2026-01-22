@@ -20,7 +20,7 @@ public class DirectionalMove {
             while (true) {
                 positionCheck.updatePosition(updatePos[0], updatePos[1]);
 
-                if (positionCheck.getRow() > 8 || positionCheck.getColumn() > 8 || positionCheck.getRow() < 1 || positionCheck.getColumn() < 1) {
+                if (!positionCheck.positionWithinBoard()) {
                     break;
                 }
 
