@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -92,12 +91,33 @@ public class ChessGame {
             } else {
                 gameBoard.addPiece(move.getEndPosition(), new ChessPiece(gameBoard.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
             }
-            gameBoard.addPiece(move.getStartPosition(), null);
+            gameBoard.removePiece(move.getStartPosition());
 
             swapTeamTurn();
         } else {
             throw new InvalidMoveException("Invalid move: " + move);
         }
+    }
+
+    private Set<ChessPosition> attackPositionsSetCalculator(TeamColor currentTeam) {
+        Set<ChessPosition> attackSet = new HashSet<>();
+
+        List<ChessPosition> enemyPiecePositions;
+        if (currentTeam == TeamColor.WHITE) {
+            enemyPiecePositions = gameBoard.getBlackTeamPosList();
+        } else {
+            enemyPiecePositions = gameBoard.getWhiteTeamPosList();
+        }
+
+        ChessPosition
+
+        for (ChessPosition enemyPosition : enemyPiecePositions) {
+
+        }
+
+
+        return attackSet;
+
     }
 
     /**
