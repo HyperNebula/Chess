@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -12,9 +14,19 @@ import java.util.Objects;
 public class ChessBoard {
 
     private ChessPiece[][] chessBoard;
+    private List<ChessPosition> whiteTeamPosList;
+    private List<ChessPosition> blackTeamPosList;
+
+    private ChessPosition whiteKingPosition;
+    private ChessPosition blackKingPosition;
 
     public ChessBoard() {
+
         chessBoard = new ChessPiece[8][8];
+
+        whiteTeamPosList = new ArrayList<>();
+        blackTeamPosList = new ArrayList<>();
+
     }
 
     /**
@@ -27,6 +39,38 @@ public class ChessBoard {
 
         chessBoard[position.getRow() - 1][position.getColumn() - 1] = piece;
 
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            whiteTeamPosList.add(position);
+            blackTeamPosList.remove(position);
+
+            if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                whiteKingPosition = position;
+            }
+        } else {
+            blackTeamPosList.add(position);
+            whiteTeamPosList.remove(position);
+
+            if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                blackKingPosition = position;
+            }
+        }
+
+    }
+
+    public void removePiece(ChessPosition position) {
+
+        chessBoard[position.getRow() - 1][position.getColumn() - 1] = null;
+
+        whiteTeamPosList.remove(position);
+        blackTeamPosList.remove(position);
+    }
+
+    public List<ChessPosition> getWhiteTeamPosList() {
+        return whiteTeamPosList;
+    }
+
+    public List<ChessPosition> getBlackTeamPosList() {
+        return blackTeamPosList;
     }
 
     /**
@@ -50,25 +94,25 @@ public class ChessBoard {
 
         chessBoard = new ChessPiece[8][8];
 
-        setupRow(0, ChessGame.TeamColor.WHITE);
-        setupRow(7, ChessGame.TeamColor.BLACK);
+        setupRow(1, ChessGame.TeamColor.WHITE);
+        setupRow(8, ChessGame.TeamColor.BLACK);
 
-        for (int col = 0; col < 8; col++) {
-            chessBoard[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-            chessBoard[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        for (int col = 1; col < 9; col++) {
+            addPiece(new ChessPosition(2, col), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+            addPiece(new ChessPosition(7, col), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
 
     }
 
     private void setupRow(int row, ChessGame.TeamColor color) {
-        chessBoard[row][0] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
-        chessBoard[row][1] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
-        chessBoard[row][2] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
-        chessBoard[row][3] = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
-        chessBoard[row][4] = new ChessPiece(color, ChessPiece.PieceType.KING);
-        chessBoard[row][5] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
-        chessBoard[row][6] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
-        chessBoard[row][7] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
+        addPiece(new ChessPosition(row, 1), new ChessPiece(color, ChessPiece.PieceType.ROOK));
+        addPiece(new ChessPosition(row, 2), new ChessPiece(color, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(row, 3), new ChessPiece(color, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(row, 4), new ChessPiece(color, ChessPiece.PieceType.QUEEN));
+        addPiece(new ChessPosition(row, 5), new ChessPiece(color, ChessPiece.PieceType.KING));
+        addPiece(new ChessPosition(row, 6), new ChessPiece(color, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(row, 7), new ChessPiece(color, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(row, 8), new ChessPiece(color, ChessPiece.PieceType.ROOK));
     }
 
     @Override
