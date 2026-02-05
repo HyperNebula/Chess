@@ -73,6 +73,14 @@ public class ChessBoard {
         return blackTeamPosList;
     }
 
+    public ChessPosition getKingPos(ChessGame.TeamColor team) {
+        if (team == ChessGame.TeamColor.WHITE) {
+            return whiteKingPosition;
+        } else {
+            return blackKingPosition;
+        }
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *

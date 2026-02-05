@@ -100,7 +100,9 @@ public class ChessGame {
     }
 
     private Set<ChessPosition> attackPositionsSetCalculator(TeamColor currentTeam) {
+        Set<ChessMove> tempAttackMoveSet = new HashSet<>();
         Set<ChessPosition> attackSet = new HashSet<>();
+
 
         List<ChessPosition> enemyPiecePositions;
         if (currentTeam == TeamColor.WHITE) {
@@ -109,12 +111,38 @@ public class ChessGame {
             enemyPiecePositions = gameBoard.getWhiteTeamPosList();
         }
 
-        ChessPosition
-
         for (ChessPosition enemyPosition : enemyPiecePositions) {
+            ChessPiece piece = gameBoard.getPiece(enemyPosition);
+
+            if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+
+                ChessPosition attackLeft;
+                ChessPosition attackRight;
+                if (currentTeam == TeamColor.WHITE) {
+                    attackLeft = new ChessPosition(enemyPosition.getRow() - 1, enemyPosition.getColumn() + 1);
+                    attackRight = new ChessPosition(enemyPosition.getRow() - 1, enemyPosition.getColumn() - 1);
+                } else {
+                    attackLeft = new ChessPosition(enemyPosition.getRow() + 1, enemyPosition.getColumn() + 1);
+                    attackRight = new ChessPosition(enemyPosition.getRow() + 1, enemyPosition.getColumn() - 1);
+                }
+                if (attackLeft.positionWithinBoard()) {
+                    attackSet.add(attackLeft);
+                }
+                if (attackRight.positionWithinBoard()) {
+                    attackSet.add(attackRight);
+                }
+
+            } else {
+
+                tempAttackMoveSet.addAll(piece.pieceMoves(gameBoard, enemyPosition));
+
+            }
 
         }
 
+        for (ChessMove move : tempAttackMoveSet) {
+            attackSet.add(move.getEndPosition());
+        }
 
         return attackSet;
 
@@ -127,7 +155,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if
     }
 
     /**
