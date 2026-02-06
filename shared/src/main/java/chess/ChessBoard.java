@@ -60,6 +60,10 @@ public class ChessBoard {
 
         chessBoard[position.getRow() - 1][position.getColumn() - 1] = piece;
 
+        if (piece == null) {
+            return;
+        }
+
         if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             whiteTeamPosList.add(position);
             blackTeamPosList.remove(position);
