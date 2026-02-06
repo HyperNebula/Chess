@@ -73,12 +73,29 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (gameBoard.getPiece(startPosition) == null) {
+        ChessPiece piece = gameBoard.getPiece(startPosition);
+
+        if (piece == null) {
             return null;
         }
 
-        return gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+        TeamColor pieceColor = piece.getTeamColor();
 
+        Collection<ChessMove> candidateMoves = piece.pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+
+        for (ChessMove move : candidateMoves) {
+
+            ChessBoard copyGameBoard = new ChessBoard(gameBoard);
+
+            moveAndRemovePiece(move, copyGameBoard);
+
+            if (!(attackPositionsSetCalculator(pieceColor, copyGameBoard).contains(copyGameBoard.getKingPos(pieceColor)))) {
+                validMoves.add(move);
+            }
+        }
+
+        return validMoves;
     }
 
     /**
