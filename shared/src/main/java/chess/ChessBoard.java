@@ -29,6 +29,27 @@ public class ChessBoard {
 
     }
 
+    public ChessBoard(ChessBoard other) {
+        this.chessBoard = new ChessPiece[8][8];
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPiece originalPiece = other.chessBoard[i][j];
+
+                if (originalPiece != null) {
+                    this.chessBoard[i][j] = new ChessPiece(originalPiece);
+                }
+            }
+        }
+
+        this.whiteTeamPosList = new ArrayList<>(other.whiteTeamPosList);
+        this.blackTeamPosList = new ArrayList<>(other.blackTeamPosList);
+
+        this.whiteKingPosition = other.whiteKingPosition;
+        this.blackKingPosition = other.blackKingPosition;
+
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
