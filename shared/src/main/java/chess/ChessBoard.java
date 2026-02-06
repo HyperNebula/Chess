@@ -65,12 +65,12 @@ public class ChessBoard {
         blackTeamPosList.remove(position);
     }
 
-    public List<ChessPosition> getWhiteTeamPosList() {
-        return whiteTeamPosList;
-    }
-
-    public List<ChessPosition> getBlackTeamPosList() {
-        return blackTeamPosList;
+    public List<ChessPosition> getTeamPosList(ChessGame.TeamColor team) {
+        if (team == ChessGame.TeamColor.WHITE) {
+            return whiteTeamPosList;
+        } else {
+            return blackTeamPosList;
+        }
     }
 
     public ChessPosition getKingPos(ChessGame.TeamColor team) {
