@@ -56,6 +56,15 @@ public class ChessGame {
         BLACK
     }
 
+    private void moveAndRemovePiece(ChessMove move, ChessBoard board) {
+        if (move.getPromotionPiece() == null) {
+            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+        } else {
+            board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
+        }
+        board.removePiece(move.getStartPosition());
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -86,12 +95,7 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid move (not your turn): " + move);
         }
         if (validMoves(move.getStartPosition()).contains(move)) {
-            if (move.getPromotionPiece() == null) {
-                gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
-            } else {
-                gameBoard.addPiece(move.getEndPosition(), new ChessPiece(gameBoard.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
-            }
-            gameBoard.removePiece(move.getStartPosition());
+            moveAndRemovePiece(move, gameBoard);
 
             swapTeamTurn();
         } else {
@@ -99,20 +103,19 @@ public class ChessGame {
         }
     }
 
-    private Set<ChessPosition> attackPositionsSetCalculator(TeamColor currentTeam) {
+    private Set<ChessPosition> attackPositionsSetCalculator(TeamColor currentTeam, ChessBoard board) {
         Set<ChessMove> tempAttackMoveSet = new HashSet<>();
         Set<ChessPosition> attackSet = new HashSet<>();
 
-
         List<ChessPosition> enemyPiecePositions;
         if (currentTeam == TeamColor.WHITE) {
-            enemyPiecePositions = gameBoard.getBlackTeamPosList();
+            enemyPiecePositions = board.getTeamPosList(TeamColor.BLACK);
         } else {
-            enemyPiecePositions = gameBoard.getWhiteTeamPosList();
+            enemyPiecePositions = board.getTeamPosList(TeamColor.WHITE);
         }
 
         for (ChessPosition enemyPosition : enemyPiecePositions) {
-            ChessPiece piece = gameBoard.getPiece(enemyPosition);
+            ChessPiece piece = board.getPiece(enemyPosition);
 
             if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
 
@@ -134,7 +137,7 @@ public class ChessGame {
 
             } else {
 
-                tempAttackMoveSet.addAll(piece.pieceMoves(gameBoard, enemyPosition));
+                tempAttackMoveSet.addAll(piece.pieceMoves(board, enemyPosition));
 
             }
 
@@ -156,8 +159,25 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
 
-        return attackPositionsSetCalculator(teamColor).contains(gameBoard.getKingPos(teamColor));
+        return attackPositionsSetCalculator(teamColor, gameBoard).contains(gameBoard.getKingPos(teamColor));
 
+    }
+
+    private boolean mateChecker(TeamColor teamColor) {
+        for (ChessPosition piecePosition : gameBoard.getTeamPosList(teamColor)) {
+            for (ChessMove possibleMove : gameBoard.getPiece(piecePosition).pieceMoves(gameBoard, piecePosition)) {
+
+                ChessBoard gameBoardCopy = new ChessBoard(gameBoard);
+
+                moveAndRemovePiece(possibleMove, gameBoardCopy);
+
+                if (!(attackPositionsSetCalculator(teamColor, gameBoardCopy).contains(gameBoardCopy.getKingPos(teamColor)))) {
+                    return false;
+                }
+
+            }
+        }
+        return true;
     }
 
     /**
@@ -167,7 +187,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) {
+            return mateChecker(teamColor);
+        }
+        return false;
     }
 
     /**
@@ -178,7 +201,11 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+
+            return mateChecker(teamColor);
+        }
+        return false;
     }
 
     /**
