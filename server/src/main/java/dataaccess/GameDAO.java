@@ -25,14 +25,18 @@ public class GameDAO {
 
     public void joinGame(GameData game, ChessGame.TeamColor color, String username) {
         if (color == ChessGame.TeamColor.WHITE) {
-            gameDataStorage.set(gameDataStorage.indexOf(game), new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
+            gameDataStorage.set(gameDataStorage.indexOf(game),
+                    new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
         } else {
-            gameDataStorage.set(gameDataStorage.indexOf(game), new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
+            gameDataStorage.set(gameDataStorage.indexOf(game),
+                    new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
         }
     }
 
     public void updateGame(GameData gameData, ChessGame newGame) {
-        gameDataStorage.set(gameDataStorage.indexOf(gameData), new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), newGame));
+        gameDataStorage.set(gameDataStorage.indexOf(gameData),
+                new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(),
+                        newGame));
     }
 
     public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
