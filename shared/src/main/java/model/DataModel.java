@@ -4,10 +4,10 @@ import chess.ChessGame;
 
 public class DataModel {
 
-    record UserData(String username, String password, String email) {};
+    public record UserData(String username, String password, String email) {};
 
-    record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {};
+    public record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {};
 
-    record AuthData(String authToken, String username) {};
+    public record AuthData(String authToken, String username) {};
 
 }
