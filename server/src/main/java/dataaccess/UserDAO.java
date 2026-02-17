@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.DataModel.*;
-import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;
 import java.util.List;
