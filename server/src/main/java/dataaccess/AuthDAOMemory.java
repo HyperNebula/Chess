@@ -18,8 +18,8 @@ public class AuthDAOMemory implements AuthDAO {
         return null;
     }
 
-    public void createAuth(String authToken, String username) {
-        authDataStorage.add(new AuthData(authToken, username));
+    public void createAuth(AuthData auth) {
+        authDataStorage.add(auth);
     }
 
     public void deleteAuth(AuthData auth) {

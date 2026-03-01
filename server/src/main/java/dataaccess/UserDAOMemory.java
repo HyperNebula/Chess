@@ -5,7 +5,7 @@ import model.DataModel.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOMemory {
+public class UserDAOMemory implements UserDAO {
 
     private List<UserData> userDataStorage = new ArrayList<>();
 
@@ -18,8 +18,8 @@ public class UserDAOMemory {
         return null;
     }
 
-    public void createUser(String username, String password, String email) {
-        userDataStorage.add(new UserData(username, password, email));
+    public void createUser(UserData u) {
+        userDataStorage.add(u);
     }
 
     public void deleteAll() {

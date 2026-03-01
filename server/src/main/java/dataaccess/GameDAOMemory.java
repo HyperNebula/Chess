@@ -39,8 +39,8 @@ public class GameDAOMemory implements GameDAO{
                         newGame));
     }
 
-    public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
-        gameDataStorage.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
+    public void createGame(GameData game) {
+        gameDataStorage.add(game);
     }
 
     public void deleteGame(GameData game) {
