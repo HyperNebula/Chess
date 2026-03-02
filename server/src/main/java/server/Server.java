@@ -2,8 +2,7 @@ package server;
 
 import dataaccess.*;
 import io.javalin.*;
-import service.GameService;
-import service.UserService;
+import service.*;
 
 public class Server {
 
@@ -27,7 +26,9 @@ public class Server {
                 .get("/game", sharedServerHandler::handleGames)
                 .post("/game", sharedServerHandler::handleCreateGame)
                 .put("/game", sharedServerHandler::handleJoinGame)
-                .exception(Exception.class, sharedServerHandler::exceptionHandler);
+                .exception(AlreadyTakenException.class, sharedServerHandler::exceptionATHandler)
+                .exception(UnauthorizedException.class, sharedServerHandler::exceptionUAHandler)
+                .exception(DataAccessException.class, sharedServerHandler::exceptionDAHandler);
     }
 
     public int run(int desiredPort) {

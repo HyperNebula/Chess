@@ -28,6 +28,11 @@ public class GameDAOMemory implements GameDAO{
         if (!gameDataStorage.contains(game)) {
             throw new DataAccessException("Error: bad request");
         }
+
+        if (color == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
         if (color == ChessGame.TeamColor.WHITE) {
             if (game.whiteUsername() != null) {
                 throw new AlreadyTakenException("Error: already taken");

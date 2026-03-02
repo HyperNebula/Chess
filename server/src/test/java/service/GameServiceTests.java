@@ -26,7 +26,7 @@ public class GameServiceTests {
     @Test
     @Order(1)
     @DisplayName("ListGames Success")
-    public void listGamesSuccess() {
+    public void listGamesSuccess() throws DataAccessException {
         RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
         Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().isEmpty());
@@ -49,7 +49,7 @@ public class GameServiceTests {
     @Test
     @Order(3)
     @DisplayName("CreateGames Success")
-    public void createGamesSuccess() {
+    public void createGamesSuccess() throws DataAccessException {
         RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));

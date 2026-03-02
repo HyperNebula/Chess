@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.DataModel.*;
 import model.RequestModal.*;
@@ -23,7 +24,11 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException {
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException {
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
         if (userDB.getUser(registerRequest.username()) != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
@@ -35,7 +40,11 @@ public class UserService {
         return new RegisterResult(registerRequest.username(), tempAuth);
     }
 
-    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException{
+    public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException, DataAccessException {
+        if (loginRequest.username() == null || loginRequest.password() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
         UserData tempUserData = userDB.getUser(loginRequest.username());
 
         if (tempUserData == null) {

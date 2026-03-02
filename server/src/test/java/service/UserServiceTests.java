@@ -25,7 +25,7 @@ public class UserServiceTests {
     @Test
     @Order(1)
     @DisplayName("Register Success")
-    public void registerSuccess() {
+    public void registerSuccess() throws DataAccessException {
         RegisterResult result = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
         sharedUserService.register(new RegisterRequest("Bob2", "password", "email"));
 
@@ -39,7 +39,7 @@ public class UserServiceTests {
     @Test
     @Order(2)
     @DisplayName("Register Failure")
-    public void registerFailure() {
+    public void registerFailure() throws DataAccessException {
         sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
         Assertions.assertThrows(AlreadyTakenException.class, () -> sharedUserService.register(new RegisterRequest("Bob", "password2", "email2")));
@@ -48,7 +48,7 @@ public class UserServiceTests {
     @Test
     @Order(3)
     @DisplayName("Login Success")
-    public void loginSuccess() {
+    public void loginSuccess() throws DataAccessException {
         RegisterResult regresult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
         LoginResult logresult = sharedUserService.login(new LoginRequest("Bob", "password"));
 
@@ -63,7 +63,7 @@ public class UserServiceTests {
     @Test
     @Order(4)
     @DisplayName("Login Failure")
-    public void loginFailure() {
+    public void loginFailure() throws DataAccessException {
         sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
         Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.login(new LoginRequest("Bob1", "password")));
@@ -73,7 +73,7 @@ public class UserServiceTests {
     @Test
     @Order(5)
     @DisplayName("Logout Success")
-    public void logoutSuccess() {
+    public void logoutSuccess() throws DataAccessException {
         RegisterResult regresult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
         LogoutResult logoutresult = sharedUserService.logout(new LogoutRequest(regresult.authToken()));
 
@@ -84,7 +84,7 @@ public class UserServiceTests {
     @Test
     @Order(6)
     @DisplayName("Logout Failure")
-    public void logoutFailure() {
+    public void logoutFailure() throws DataAccessException {
         sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
         Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.logout(new LogoutRequest("STRING")));

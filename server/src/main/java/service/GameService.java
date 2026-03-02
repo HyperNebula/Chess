@@ -26,7 +26,11 @@ public class GameService {
         return new GamesResult(gameDB.listGames());
     }
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) {
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
+        if (createGameRequest.gameName() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
         AuthData tempAuthData = authDB.getAuth(createGameRequest.authToken());
 
         if (tempAuthData == null) {
