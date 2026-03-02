@@ -2,12 +2,12 @@ package dataaccess;
 
 import model.DataModel.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 
 public class UserDAOMemory implements UserDAO {
 
-    private List<UserData> userDataStorage = new ArrayList<>();
+    private Collection<UserData> userDataStorage = new LinkedHashSet<>();
 
     public UserData getUser(String username) {
         for (UserData user : userDataStorage) {
@@ -23,7 +23,7 @@ public class UserDAOMemory implements UserDAO {
     }
 
     public void deleteAll() {
-        userDataStorage = new ArrayList<>();
+        userDataStorage = new LinkedHashSet<>();
     }
 
 }

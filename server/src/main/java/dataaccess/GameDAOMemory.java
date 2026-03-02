@@ -23,7 +23,10 @@ public class GameDAOMemory implements GameDAO{
         return gameDataStorage;
     }
 
-    public void joinGame(GameData game, ChessGame.TeamColor color, String username) {
+    public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws DataAccessException {
+        if (!gameDataStorage.contains(game)) {
+            throw new DataAccessException("Game " + game + "does not exist");
+        }
         if (color == ChessGame.TeamColor.WHITE) {
             gameDataStorage.set(gameDataStorage.indexOf(game),
                     new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
@@ -33,7 +36,10 @@ public class GameDAOMemory implements GameDAO{
         }
     }
 
-    public void updateGame(GameData gameData, ChessGame newGame) {
+    public void updateGame(GameData gameData, ChessGame newGame) throws DataAccessException {
+        if (!gameDataStorage.contains(gameData)) {
+            throw new DataAccessException("Game " + gameData + "does not exist");
+        }
         gameDataStorage.set(gameDataStorage.indexOf(gameData),
                 new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(),
                         newGame));
@@ -43,7 +49,10 @@ public class GameDAOMemory implements GameDAO{
         gameDataStorage.add(game);
     }
 
-    public void deleteGame(GameData game) {
+    public void deleteGame(GameData game) throws DataAccessException {
+        if (!gameDataStorage.contains(game)) {
+            throw new DataAccessException("Game " + game + "does not exist");
+        }
         gameDataStorage.remove(game);
     }
 
