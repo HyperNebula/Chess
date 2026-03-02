@@ -51,6 +51,7 @@ public class GameDAOMemory implements GameDAO{
         }
     }
 
+    /*
     public void updateGame(GameData gameData, ChessGame newGame) throws DataAccessException {
         if (!gameDataStorage.contains(gameData)) {
             throw new DataAccessException("Error: bad request");
@@ -59,17 +60,20 @@ public class GameDAOMemory implements GameDAO{
                 new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(),
                         newGame));
     }
+    */
 
     public void createGame(GameData game) {
         gameDataStorage.add(game);
     }
 
+    /*
     public void deleteGame(GameData game) throws DataAccessException {
         if (!gameDataStorage.contains(game)) {
             throw new DataAccessException("Error: bad request");
         }
         gameDataStorage.remove(game);
     }
+    */
 
     public void deleteAll() {
         gameDataStorage = new ArrayList<>();

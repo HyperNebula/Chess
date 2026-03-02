@@ -42,7 +42,8 @@ public class UserServiceTests {
     public void registerFailure() throws DataAccessException {
         sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        Assertions.assertThrows(AlreadyTakenException.class, () -> sharedUserService.register(new RegisterRequest("Bob", "password2", "email2")));
+        Assertions.assertThrows(AlreadyTakenException.class,
+                () -> sharedUserService.register(new RegisterRequest("Bob", "password2", "email2")));
     }
 
     @Test
@@ -56,7 +57,8 @@ public class UserServiceTests {
         Assertions.assertEquals("Bob", sharedAuthDAO.getAuth(regresult.authToken()).username());
         Assertions.assertEquals("Bob", sharedAuthDAO.getAuth(logresult.authToken()).username());
 
-        Assertions.assertNotEquals(sharedAuthDAO.getAuth(regresult.authToken()).authToken(), sharedAuthDAO.getAuth(logresult.authToken()).authToken());
+        Assertions.assertNotEquals(sharedAuthDAO.getAuth(regresult.authToken()).authToken(),
+                sharedAuthDAO.getAuth(logresult.authToken()).authToken());
 
     }
 
