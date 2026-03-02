@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AuthDAOMemory implements AuthDAO {
 
-    private List<AuthData> authDataStorage = new ArrayList<>();
+    private static List<AuthData> authDataStorage = new ArrayList<>();
 
     public AuthData getAuth(String authToken) {
         for (AuthData auth : authDataStorage) {

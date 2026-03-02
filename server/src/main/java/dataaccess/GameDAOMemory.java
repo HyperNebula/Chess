@@ -8,7 +8,7 @@ import java.util.List;
 
 public class GameDAOMemory implements GameDAO{
 
-    private List<GameData> gameDataStorage = new ArrayList<>();
+    private static List<GameData> gameDataStorage = new ArrayList<>();
 
     public GameData getGame(int gameID) {
         for (GameData game : gameDataStorage) {
