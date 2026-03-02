@@ -7,8 +7,6 @@ import model.RequestModal.*;
 import model.ResultModal.*;
 import org.junit.jupiter.api.*;
 
-import javax.xml.crypto.Data;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameServiceTests {
 
@@ -131,7 +129,7 @@ public class GameServiceTests {
     public void deleteSuccess() throws DataAccessException {
         RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
+        sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
 
         Assertions.assertEquals(1,
                 sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().size());
