@@ -43,7 +43,10 @@ public class UserServiceTests {
     @DisplayName("Register Failure")
     public void registerFailure() {
         sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
-        //sharedUserService.register(new RegisterRequest("Bob", "password2", "email2"));
+
+        Assertions.assertThrows(AlreadyTakenException.class, () -> {
+            sharedUserService.register(new RegisterRequest("Bob", "password2", "email2"));
+        });
     };
 
 }
