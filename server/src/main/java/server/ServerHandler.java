@@ -55,7 +55,8 @@ public class ServerHandler {
     }
 
     public void handleCreateGame(Context ctx) throws DataAccessException {
-        CreateGameRequest createGameRequest = new CreateGameRequest(ctx.header("authorization"), (String) new Gson().fromJson(ctx.body(), Map.class).get("gameName"));
+        CreateGameRequest createGameRequest = new CreateGameRequest(ctx.header("authorization"),
+                (String) new Gson().fromJson(ctx.body(), Map.class).get("gameName"));
         CreateGameResult createGameResult = sharedGameService.createGame(createGameRequest);
 
         ctx.status(200).result(new Gson().toJson(createGameResult));
