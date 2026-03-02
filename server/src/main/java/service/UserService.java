@@ -39,6 +39,10 @@ public class UserService {
     public LoginResult login(LoginRequest loginRequest) throws UnauthorizedException{
         UserData tempUserData = userDB.getUser(loginRequest.username());
 
+        if (tempUserData == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
         if (!Objects.equals(tempUserData.password(), loginRequest.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
@@ -50,7 +54,7 @@ public class UserService {
 
     }
 
-    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException, DataAccessException {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException {
         AuthData tempAuthData = authDB.getAuth(logoutRequest.authToken());
 
         if (tempAuthData == null) {

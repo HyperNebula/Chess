@@ -22,10 +22,7 @@ public class AuthDAOMemory implements AuthDAO {
         authDataStorage.add(auth);
     }
 
-    public void deleteAuth(AuthData auth) throws DataAccessException {
-        if (!authDataStorage.contains(auth)) {
-            throw new DataAccessException("Game " + auth + "does not exist");
-        }
+    public void deleteAuth(AuthData auth) {
         authDataStorage.remove(auth);
     }
 
