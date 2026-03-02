@@ -10,7 +10,7 @@ public class ResultModal {
 
     public record LogoutResult(Boolean success) {}
 
-    public record GamesResult(List<DataModel.GameData> gameDataList) {}
+    public record GamesResult(List<DataModel.GameData> games) {}
 
     public record CreateGameResult(int gameID) {}
 

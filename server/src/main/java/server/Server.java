@@ -7,11 +7,9 @@ import service.UserService;
 
 public class Server {
 
-    private final Javalin javalin;
+    private final Javalin httpHandler;
 
     public Server() {
-        javalin = Javalin.create(config -> config.staticFiles.add("web"));
-
         UserDAO sharedUserDAO = new UserDAOMemory();
         AuthDAO sharedAuthDAO = new AuthDAOMemory();
         GameDAO sharedGameDAO = new GameDAOMemory();
@@ -19,14 +17,25 @@ public class Server {
         UserService sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
         GameService sharedGameService = new GameService(sharedGameDAO, sharedAuthDAO);
 
+        ServerHandler sharedServerHandler = new ServerHandler(sharedUserService, sharedGameService);
+
+        httpHandler = Javalin.create(config -> config.staticFiles.add("web"))
+                .delete("/db", sharedServerHandler::handleClear)
+                .post("/user", sharedServerHandler::handleRegister)
+                .post("/session", sharedServerHandler::handleLogin)
+                .delete("/session", sharedServerHandler::handleLogout)
+                .get("/game", sharedServerHandler::handleGames)
+                .post("/game", sharedServerHandler::handleCreateGame)
+                .put("/game", sharedServerHandler::handleJoinGame)
+                .exception(Exception.class, sharedServerHandler::exceptionHandler);
     }
 
     public int run(int desiredPort) {
-        javalin.start(desiredPort);
-        return javalin.port();
+        httpHandler.start(desiredPort);
+        return httpHandler.port();
     }
 
     public void stop() {
-        javalin.stop();
+        httpHandler.stop();
     }
 }

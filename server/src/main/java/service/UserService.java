@@ -25,7 +25,7 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException {
         if (userDB.getUser(registerRequest.username()) != null) {
-            throw new AlreadyTakenException("Error: already taken");
+            throw new AlreadyTakenException(403, "Error: already taken");
         }
         userDB.createUser(new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email()));
 

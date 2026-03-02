@@ -39,8 +39,8 @@ public class GameService {
         return new CreateGameResult(tempGameID);
     }
 
-    public JoinResult joinGame(JoinRequest joinRequest) throws DataAccessException {
-        AuthData tempAuthData = authDB.getAuth(joinRequest.authToken());
+    public JoinResult joinGame(String authToken, JoinRequest joinRequest) throws DataAccessException {
+        AuthData tempAuthData = authDB.getAuth(authToken);
 
         if (tempAuthData == null) {
             throw new UnauthorizedException("Error: unauthorized");

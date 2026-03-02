@@ -29,13 +29,13 @@ public class GameServiceTests {
     public void listGamesSuccess() {
         RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().isEmpty());
+        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().isEmpty());
 
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
 
-        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().size());
-        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameName());
-        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameID());
+        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().size());
+        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameName());
+        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameID());
         Assertions.assertEquals(1, createGameResult.gameID());
     }
 
@@ -55,12 +55,12 @@ public class GameServiceTests {
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
         CreateGameResult createGameResult2 = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game2"));
 
-        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameName());
-        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameID());
+        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameName());
+        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameID());
         Assertions.assertEquals(1, createGameResult.gameID());
 
-        Assertions.assertEquals("Game2", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(1).gameName());
-        Assertions.assertEquals(2, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(1).gameID());
+        Assertions.assertEquals("Game2", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().get(1).gameName());
+        Assertions.assertEquals(2, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().get(1).gameID());
         Assertions.assertEquals(2, createGameResult2.gameID());
     }
 
@@ -79,9 +79,9 @@ public class GameServiceTests {
 
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
 
-        JoinResult joinResult = sharedGameService.joinGame(new JoinRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID()));
+        JoinResult joinResult = sharedGameService.joinGame(registerResult.authToken(), new JoinRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID()));
 
-        GameData testGameData = sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(createGameResult.gameID() - 1);
+        GameData testGameData = sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().get(createGameResult.gameID() - 1);
 
         Assertions.assertTrue(joinResult.success());
         Assertions.assertEquals(new GameData(createGameResult.gameID(), "Bob", null, "Game", new ChessGame()), testGameData);
@@ -91,20 +91,20 @@ public class GameServiceTests {
     @Order(6)
     @DisplayName("Join Failure")
     public void JoinFailure() throws DataAccessException {
-        Assertions.assertThrows(UnauthorizedException.class, () -> sharedGameService.joinGame(new JoinRequest("123", ChessGame.TeamColor.WHITE, 0)));
+        Assertions.assertThrows(UnauthorizedException.class, () -> sharedGameService.joinGame("123", new JoinRequest(ChessGame.TeamColor.WHITE, 0)));
 
         RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        Assertions.assertThrows(DataAccessException.class, () -> sharedGameService.joinGame(new JoinRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, 0)));
+        Assertions.assertThrows(DataAccessException.class, () -> sharedGameService.joinGame(registerResult.authToken(), new JoinRequest(ChessGame.TeamColor.WHITE, 0)));
 
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "game"));
-        sharedGameService.joinGame(new JoinRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID()));
+        sharedGameService.joinGame(registerResult.authToken(), new JoinRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID()));
 
         sharedUserService.logout(new LogoutRequest(registerResult.authToken()));
         RegisterResult registerResult2 = sharedUserService.register(new RegisterRequest("Bob2", "password", "email"));
 
-        Assertions.assertThrows(AlreadyTakenException.class, () -> sharedGameService.joinGame(new JoinRequest(registerResult2.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID())));
-        sharedGameService.joinGame(new JoinRequest(registerResult2.authToken(), ChessGame.TeamColor.BLACK, createGameResult.gameID()));
+        Assertions.assertThrows(AlreadyTakenException.class, () -> sharedGameService.joinGame(registerResult2.authToken(), new JoinRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID())));
+        sharedGameService.joinGame(registerResult2.authToken(), new JoinRequest(ChessGame.TeamColor.BLACK, createGameResult.gameID()));
 
     }
 

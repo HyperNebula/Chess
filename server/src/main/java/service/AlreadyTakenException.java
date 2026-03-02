@@ -1,7 +1,7 @@
 package service;
 
 public class AlreadyTakenException extends RuntimeException {
-    public AlreadyTakenException(String message) {
+    public AlreadyTakenException(int code, String message) {
         super(message);
     }
 }
