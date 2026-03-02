@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.DataModel.*;
 import model.RequestModal.*;

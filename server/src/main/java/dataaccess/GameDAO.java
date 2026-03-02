@@ -6,11 +6,11 @@ import model.DataModel.*;
 import java.util.List;
 
 public interface GameDAO {
-    public GameData getGame(int gameID);
-    public List<GameData> listGames();
-    public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws DataAccessException;
-    public void updateGame(GameData gameData, ChessGame newGame) throws DataAccessException;
-    public void createGame(GameData game) ;
-    public void deleteGame(GameData game) throws DataAccessException;
-    public void deleteAll();
+    GameData getGame(int gameID);
+    List<GameData> listGames();
+    void joinGame(GameData game, ChessGame.TeamColor color, String username) throws DataAccessException;
+    void updateGame(GameData gameData, ChessGame newGame) throws DataAccessException;
+    void createGame(GameData game) ;
+    void deleteGame(GameData game) throws DataAccessException;
+    void deleteAll();
 }
