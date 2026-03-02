@@ -14,6 +14,6 @@ public class RequestModal {
 
     public record CreateGameRequest(String authToken, String gameName) {};
 
-    public record JoinRequest(String authToken, ChessGame.TeamColor playerColor, int StringID) {};
+    public record JoinRequest(String authToken, ChessGame.TeamColor playerColor, int gameID) {};
 
 }

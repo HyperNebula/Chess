@@ -1,10 +1,8 @@
 package server;
 
-import dataaccess.AuthDAO;
-import dataaccess.AuthDAOMemory;
-import dataaccess.UserDAO;
-import dataaccess.UserDAOMemory;
+import dataaccess.*;
 import io.javalin.*;
+import service.GameService;
 import service.UserService;
 
 public class Server {
@@ -16,8 +14,10 @@ public class Server {
 
         UserDAO sharedUserDAO = new UserDAOMemory();
         AuthDAO sharedAuthDAO = new AuthDAOMemory();
+        GameDAO sharedGameDAO = new GameDAOMemory();
 
         UserService sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
+        GameService sharedGameService = new GameService(sharedGameDAO, sharedAuthDAO);
 
     }
 

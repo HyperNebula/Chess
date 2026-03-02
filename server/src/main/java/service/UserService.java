@@ -64,4 +64,9 @@ public class UserService {
 
         return new LogoutResult(true);
     }
+
+    public void deleteAllUsers() {
+        userDB.deleteAll();
+        authDB.deleteAll();
+    }
 }
