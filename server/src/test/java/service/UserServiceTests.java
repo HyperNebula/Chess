@@ -34,7 +34,7 @@ public class UserServiceTests {
 
         Assertions.assertEquals(new UserData("Bob2", "password", "email"), sharedUserDAO.getUser("Bob2"));
 
-    };
+    }
 
     @Test
     @Order(2)
@@ -42,10 +42,8 @@ public class UserServiceTests {
     public void registerFailure() {
         sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        Assertions.assertThrows(AlreadyTakenException.class, () -> {
-            sharedUserService.register(new RegisterRequest("Bob", "password2", "email2"));
-        });
-    };
+        Assertions.assertThrows(AlreadyTakenException.class, () -> sharedUserService.register(new RegisterRequest("Bob", "password2", "email2")));
+    }
 
     @Test
     @Order(3)
@@ -60,7 +58,7 @@ public class UserServiceTests {
 
         Assertions.assertNotEquals(sharedAuthDAO.getAuth(regresult.authToken()).authToken(), sharedAuthDAO.getAuth(logresult.authToken()).authToken());
 
-    };
+    }
 
     @Test
     @Order(4)
@@ -68,13 +66,9 @@ public class UserServiceTests {
     public void loginFailure() {
         sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            sharedUserService.login(new LoginRequest("Bob1", "password"));
-        });
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            sharedUserService.login(new LoginRequest("Bob", "password2"));
-        });
-    };
+        Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.login(new LoginRequest("Bob1", "password")));
+        Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.login(new LoginRequest("Bob", "password2")));
+    }
 
     @Test
     @Order(5)
@@ -85,17 +79,15 @@ public class UserServiceTests {
 
         Assertions.assertTrue(logoutresult.success());
         Assertions.assertNull(sharedAuthDAO.getAuth(regresult.authToken()));
-    };
+    }
 
     @Test
     @Order(6)
     @DisplayName("Logout Failure")
     public void logoutFailure() {
-        RegisterResult regresult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
+        sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            sharedUserService.logout(new LogoutRequest("STRING"));
-        });
-    };
+        Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.logout(new LogoutRequest("STRING")));
+    }
 
 }

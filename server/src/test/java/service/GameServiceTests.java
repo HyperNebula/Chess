@@ -7,23 +7,17 @@ import model.RequestModal.*;
 import model.ResultModal.*;
 import org.junit.jupiter.api.*;
 
-import java.util.List;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameServiceTests {
-
-    private static GameDAO sharedGameDAO;
-    private static AuthDAO sharedAuthDAO;
-    private static UserDAO sharedUserDAO;
 
     private static GameService sharedGameService;
     private static UserService sharedUserService;
 
     @BeforeEach
     public void setup() {
-        sharedGameDAO = new GameDAOMemory();
-        sharedAuthDAO = new AuthDAOMemory();
-        sharedUserDAO = new UserDAOMemory();
+        GameDAO sharedGameDAO = new GameDAOMemory();
+        AuthDAO sharedAuthDAO = new AuthDAOMemory();
+        UserDAO sharedUserDAO = new UserDAOMemory();
 
         sharedGameService = new GameService(sharedGameDAO, sharedAuthDAO);
         sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
@@ -40,19 +34,17 @@ public class GameServiceTests {
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
 
         Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().size());
-        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(0).gameName());
-        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(0).gameID());
+        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameName());
+        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameID());
         Assertions.assertEquals(1, createGameResult.gameID());
-    };
+    }
 
     @Test
     @Order(2)
     @DisplayName("ListGames Failure")
     public void listGamesFailure() {
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            sharedGameService.listGames(new GamesRequest("123"));
-        });
-    };
+        Assertions.assertThrows(UnauthorizedException.class, () -> sharedGameService.listGames(new GamesRequest("123")));
+    }
 
     @Test
     @Order(3)
@@ -63,25 +55,21 @@ public class GameServiceTests {
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
         CreateGameResult createGameResult2 = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game2"));
 
-        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(0).gameName());
-        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(0).gameID());
+        Assertions.assertEquals("Game", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameName());
+        Assertions.assertEquals(1, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().getFirst().gameID());
         Assertions.assertEquals(1, createGameResult.gameID());
 
         Assertions.assertEquals("Game2", sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(1).gameName());
         Assertions.assertEquals(2, sharedGameService.listGames(new GamesRequest(registerResult.authToken())).gameDataList().get(1).gameID());
         Assertions.assertEquals(2, createGameResult2.gameID());
-    };
+    }
 
     @Test
     @Order(4)
     @DisplayName("CreateGames Failure")
     public void createGamesFailure() {
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            sharedGameService.createGame(new CreateGameRequest("123", "Game"));
-        });
-
-
-    };
+        Assertions.assertThrows(UnauthorizedException.class, () -> sharedGameService.createGame(new CreateGameRequest("123", "Game")));
+    }
 
     @Test
     @Order(5)
@@ -97,21 +85,17 @@ public class GameServiceTests {
 
         Assertions.assertTrue(joinResult.success());
         Assertions.assertEquals(new GameData(createGameResult.gameID(), "Bob", null, "Game", new ChessGame()), testGameData);
-    };
+    }
 
     @Test
     @Order(6)
     @DisplayName("Join Failure")
     public void JoinFailure() throws DataAccessException {
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            sharedGameService.joinGame(new JoinRequest("123", ChessGame.TeamColor.WHITE, 0));
-        });
+        Assertions.assertThrows(UnauthorizedException.class, () -> sharedGameService.joinGame(new JoinRequest("123", ChessGame.TeamColor.WHITE, 0)));
 
         RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
 
-        Assertions.assertThrows(DataAccessException.class, () -> {
-            sharedGameService.joinGame(new JoinRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, 0));
-        });
+        Assertions.assertThrows(DataAccessException.class, () -> sharedGameService.joinGame(new JoinRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, 0)));
 
         CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "game"));
         sharedGameService.joinGame(new JoinRequest(registerResult.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID()));
@@ -119,12 +103,9 @@ public class GameServiceTests {
         sharedUserService.logout(new LogoutRequest(registerResult.authToken()));
         RegisterResult registerResult2 = sharedUserService.register(new RegisterRequest("Bob2", "password", "email"));
 
-        Assertions.assertThrows(AlreadyTakenException.class, () -> {
-            sharedGameService.joinGame(new JoinRequest(registerResult2.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID()));
-        });
+        Assertions.assertThrows(AlreadyTakenException.class, () -> sharedGameService.joinGame(new JoinRequest(registerResult2.authToken(), ChessGame.TeamColor.WHITE, createGameResult.gameID())));
         sharedGameService.joinGame(new JoinRequest(registerResult2.authToken(), ChessGame.TeamColor.BLACK, createGameResult.gameID()));
 
-    };
-
+    }
 
 }
