@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 
 public class UserDAOMemory implements UserDAO {
 
-    private static Collection<UserData> userDataStorage = new LinkedHashSet<>();
+    private Collection<UserData> userDataStorage = new LinkedHashSet<>();
 
     public UserData getUser(String username) {
         for (UserData user : userDataStorage) {
