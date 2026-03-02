@@ -30,7 +30,7 @@ public class GameDAOMemory implements GameDAO{
         }
         if (color == ChessGame.TeamColor.WHITE) {
             if (game.whiteUsername() != null) {
-                throw new AlreadyTakenException(403, "Error: already taken");
+                throw new AlreadyTakenException("Error: already taken");
             }
 
             gameDataStorage.set(gameDataStorage.indexOf(game),
@@ -38,7 +38,7 @@ public class GameDAOMemory implements GameDAO{
 
         } else {
             if (game.blackUsername() != null) {
-                throw new AlreadyTakenException(403, "Error: already taken");
+                throw new AlreadyTakenException("Error: already taken");
             }
 
             gameDataStorage.set(gameDataStorage.indexOf(game),
