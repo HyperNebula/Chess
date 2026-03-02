@@ -14,11 +14,6 @@ public class UserServiceTests {
 
     private static UserService sharedUserService;
 
-    @BeforeAll
-    public static void init() {
-        System.out.print("Hello");
-    }
-
     @BeforeEach
     public void setup() {
         sharedUserDAO = new UserDAOMemory();
