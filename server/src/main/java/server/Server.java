@@ -1,6 +1,11 @@
 package server;
 
+import dataaccess.AuthDAO;
+import dataaccess.AuthDAOMemory;
+import dataaccess.UserDAO;
+import dataaccess.UserDAOMemory;
 import io.javalin.*;
+import service.UserService;
 
 public class Server {
 
@@ -9,7 +14,10 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Register your endpoints and exception handlers here.
+        UserDAO sharedUserDAO = new UserDAOMemory();
+        AuthDAO sharedAuthDAO = new AuthDAOMemory();
+
+        UserService sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
 
     }
 
