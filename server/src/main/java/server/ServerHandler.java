@@ -1,6 +1,5 @@
 package server;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
@@ -9,7 +8,6 @@ import model.ResultModal.*;
 import service.*;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class ServerHandler {
 
