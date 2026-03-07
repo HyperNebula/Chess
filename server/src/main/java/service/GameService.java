@@ -37,10 +37,9 @@ public class GameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
-        int tempGameID = gameDB.listGames().size() + 1;
-        gameDB.createGame(new GameData(tempGameID, null, null, createGameRequest.gameName(), new ChessGame()));
+        int gameID = gameDB.createGame(new GameData(0, null, null, createGameRequest.gameName(), new ChessGame()));
 
-        return new CreateGameResult(tempGameID);
+        return new CreateGameResult(gameID);
     }
 
     public JoinResult joinGame(String authToken, JoinRequest joinRequest) throws DataAccessException {

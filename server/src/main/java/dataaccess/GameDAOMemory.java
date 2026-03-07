@@ -51,8 +51,9 @@ public class GameDAOMemory implements GameDAO{
         }
     }
 
-    public void createGame(GameData game) {
+    public int createGame(GameData game) {
         gameDataStorage.add(game);
+        return 0;
     }
 
     public void deleteAll() {
