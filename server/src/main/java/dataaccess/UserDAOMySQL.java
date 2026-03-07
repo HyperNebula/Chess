@@ -4,9 +4,6 @@ import model.DataModel.*;
 
 import java.sql.*;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
 public class UserDAOMySQL implements UserDAO {
 
     public UserDAOMySQL() throws DataAccessException {

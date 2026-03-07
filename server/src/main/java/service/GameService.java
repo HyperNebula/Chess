@@ -28,7 +28,7 @@ public class GameService {
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
         if (createGameRequest.gameName() == null) {
-            throw new DataAccessException("Error: bad request");
+            throw new BadRequestException("Error: bad request");
         }
 
         AuthData tempAuthData = authDB.getAuth(createGameRequest.authToken());
@@ -49,10 +49,14 @@ public class GameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
+        if (joinRequest.playerColor() == null) {
+            throw new BadRequestException("Error: bad request");
+        }
+
         GameData tempOldGame = gameDB.getGame(joinRequest.gameID());
 
         if (tempOldGame == null) {
-            throw new DataAccessException("Error: bad request");
+            throw new BadRequestException("Error: bad request");
         }
 
         gameDB.joinGame(tempOldGame, joinRequest.playerColor(), tempAuthData.username());

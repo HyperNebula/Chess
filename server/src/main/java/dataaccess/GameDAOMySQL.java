@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.DataModel.*;
 import service.AlreadyTakenException;
+import service.BadRequestException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +16,10 @@ import java.util.List;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class GameDAOMySQL implements GameDAO {
+
+    public GameDAOMySQL() throws DataAccessException {
+        configureDatabase();
+    }
 
     public GameData getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -51,10 +56,6 @@ public class GameDAOMySQL implements GameDAO {
     }
 
     public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws DataAccessException {
-        if (color == null) {
-            throw new DataAccessException("Error: bad request");
-        }
-
         if (color == ChessGame.TeamColor.WHITE) {
             if (game.whiteUsername() != null) {
                 throw new AlreadyTakenException("Error: already taken");

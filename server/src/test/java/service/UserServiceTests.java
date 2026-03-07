@@ -62,7 +62,7 @@ public class UserServiceTests {
     @Test
     @Order(4)
     @DisplayName("Login Failure")
-    public void loginFailure() throws DataAccessException {
+    public void loginFailure() {
         Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.login(new LoginRequest("Bob1", "password")));
         Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.login(new LoginRequest("Bob", "password2")));
     }
