@@ -4,23 +4,20 @@ import model.DataModel.*;
 
 import java.sql.*;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
+public class AuthDAOMySQL implements AuthDAO {
 
-public class UserDAOMySQL implements UserDAO {
-
-    public UserDAOMySQL() throws DataAccessException {
+    public AuthDAOMySQL() throws DataAccessException {
         configureDatabase();
     }
 
-    public UserData getUser(String username) throws DataAccessException {
+    public AuthData getAuth(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "SELECT username, password, email FROM users WHERE username=?";
+            String statement = "SELECT authToken, username FROM auth WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, username);
+                ps.setString(1, authToken);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readUser(rs);
+                        return readAuth(rs);
                     }
                 }
             }
@@ -30,14 +27,12 @@ public class UserDAOMySQL implements UserDAO {
         return null;
     }
 
-
-    public void createUser(UserData u) throws DataAccessException {
+    public void createAuth(AuthData auth) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+            String statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, u.username());
-                ps.setString(2, u.password());
-                ps.setString(3, u.email());
+                ps.setString(1, auth.authToken());
+                ps.setString(2, auth.username());
 
                 ps.executeUpdate();
             }
@@ -46,10 +41,21 @@ public class UserDAOMySQL implements UserDAO {
         }
     }
 
+    public void deleteAuth(AuthData auth) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "DELETE FROM auth WHERE authToken=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, auth.authToken());
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+        }
+    }
 
     public void deleteAll() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "TRUNCATE users";
+            String statement = "TRUNCATE auth";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.executeUpdate();
             }
@@ -58,20 +64,18 @@ public class UserDAOMySQL implements UserDAO {
         }
     }
 
-    private UserData readUser(ResultSet rs) throws SQLException {
+    private AuthData readAuth(ResultSet rs) throws SQLException {
+        String authToken = rs.getString("authToken");
         String username = rs.getString("username");
-        String password = rs.getString("password");
-        String email = rs.getString("email");
-        return new UserData(username, password, email);
+        return new AuthData(authToken, username);
     }
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS auth (
+              `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
+              PRIMARY KEY (`authToken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
