@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.DataModel.*;
+import service.AlreadyTakenException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class GameDAOMySQL implements GameDAO {
 
@@ -48,12 +51,72 @@ public class GameDAOMySQL implements GameDAO {
     }
 
     public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws DataAccessException {
+        //if (!gameDataStorage.contains(game)) {
+        //    throw new DataAccessException("Error: bad request");
+        //}
 
+        if (color == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
+        if (color == ChessGame.TeamColor.WHITE) {
+            if (game.whiteUsername() != null) {
+                throw new AlreadyTakenException("Error: already taken");
+            }
+
+            try (Connection conn = DatabaseManager.getConnection()) {
+                String statement = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
+                try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                    ps.setString(1, username);
+                    ps.setInt(2, game.gameID());
+
+                    ps.executeUpdate();
+                }
+            } catch (Exception ex) {
+                throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            }
+        } else {
+            if (game.blackUsername() != null) {
+                throw new AlreadyTakenException("Error: already taken");
+            }
+
+            try (Connection conn = DatabaseManager.getConnection()) {
+                String statement = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
+                try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                    ps.setString(1, username);
+                    ps.setInt(2, game.gameID());
+
+                    ps.executeUpdate();
+                }
+            } catch (Exception ex) {
+                throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            }
+        }
     }
 
-    public int createGame(GameData game) {
+    public int createGame(GameData game) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                ps.setString(1, game.whiteUsername());
+                ps.setString(2, game.blackUsername());
+                ps.setString(3, game.gameName());
 
-        return 0;
+                String gameJson = new Gson().toJson(game.game());
+                ps.setString(4, gameJson);
+
+                ps.executeUpdate();
+
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+                return 0;
+            }
+        } catch (Exception ex) {
+            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+        }
     }
 
     public void deleteAll() throws DataAccessException {
