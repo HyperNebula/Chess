@@ -19,7 +19,7 @@ public class ServerHandler {
         this.sharedGameService = sharedGameService;
     }
 
-    public void handleClear(Context ctx) {
+    public void handleClear(Context ctx) throws DataAccessException {
         sharedUserService.deleteAllUsers();
         sharedGameService.deleteAllGames();
 
@@ -40,14 +40,14 @@ public class ServerHandler {
         ctx.status(200).result(new Gson().toJson(loginResult));
     }
 
-    public void handleLogout(Context ctx) {
+    public void handleLogout(Context ctx) throws DataAccessException {
         LogoutRequest logoutRequest = new LogoutRequest(ctx.header("authorization"));
         LogoutResult logoutResult = sharedUserService.logout(logoutRequest);
 
         ctx.status(200);
     }
 
-    public void handleGames(Context ctx) {
+    public void handleGames(Context ctx) throws DataAccessException {
         GamesRequest gamesRequest = new GamesRequest(ctx.header("authorization"));
         GamesResult gamesResult = sharedGameService.listGames(gamesRequest);
 

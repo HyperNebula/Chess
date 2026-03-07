@@ -15,9 +15,9 @@ public class UserServiceTests {
     private static UserService sharedUserService;
 
     @BeforeEach
-    public void setup() {
-        sharedUserDAO = new UserDAOMemory();
-        sharedAuthDAO = new AuthDAOMemory();
+    public void setup() throws DataAccessException {
+        sharedUserDAO = new UserDAOMySQL();
+        sharedAuthDAO = new AuthDAOMySQL();
 
         sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
     }

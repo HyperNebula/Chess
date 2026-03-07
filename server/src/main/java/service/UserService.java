@@ -62,7 +62,7 @@ public class UserService {
 
     }
 
-    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws UnauthorizedException, DataAccessException {
         AuthData tempAuthData = authDB.getAuth(logoutRequest.authToken());
 
         if (tempAuthData == null) {
@@ -74,7 +74,7 @@ public class UserService {
         return new LogoutResult(true);
     }
 
-    public void deleteAllUsers() {
+    public void deleteAllUsers() throws DataAccessException {
         userDB.deleteAll();
         authDB.deleteAll();
     }

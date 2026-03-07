@@ -2,5 +2,6 @@
 <project version="4">
   <component name="DataSourcePerFileMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/3e13f7fd-d5b3-4dde-914e-dfe97a637774/console_1.sql" value="3e13f7fd-d5b3-4dde-914e-dfe97a637774" />
+    <file url="file://$PROJECT_DIR$/server/src/main/java/dataaccess/AuthDAOMySQL.java" value="3e13f7fd-d5b3-4dde-914e-dfe97a637774" />
   </component>
 </project>

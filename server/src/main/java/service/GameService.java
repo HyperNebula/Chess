@@ -16,7 +16,7 @@ public class GameService {
         this.authDB = authDB;
     }
 
-    public GamesResult listGames(GamesRequest gamesRequest) {
+    public GamesResult listGames(GamesRequest gamesRequest) throws DataAccessException {
         AuthData tempAuthData = authDB.getAuth(gamesRequest.authToken());
 
         if (tempAuthData == null) {
