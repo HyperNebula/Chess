@@ -74,4 +74,17 @@ public class DatabaseManager {
         var port = Integer.parseInt(props.getProperty("db.port"));
         connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
     }
+
+    public static void configureDatabase(String[] createStatements) throws DataAccessException {
+        createDatabase();
+        try (Connection conn = getConnection()) {
+            for (String statement : createStatements) {
+                try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Error: Unable to configure database: %s", ex.getMessage()), ex);
+        }
+    }
 }

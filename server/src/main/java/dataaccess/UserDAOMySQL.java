@@ -7,7 +7,7 @@ import java.sql.*;
 public class UserDAOMySQL implements UserDAO {
 
     public UserDAOMySQL() throws DataAccessException {
-        configureDatabase();
+        setupDatabase();
     }
 
     public UserData getUser(String username) throws DataAccessException {
@@ -62,7 +62,8 @@ public class UserDAOMySQL implements UserDAO {
         return new UserData(username, password, email);
     }
 
-    private final String[] createStatements = {
+    private void setupDatabase() throws DataAccessException {
+        String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS users (
               `username` varchar(256) NOT NULL,
@@ -71,19 +72,8 @@ public class UserDAOMySQL implements UserDAO {
               PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
-    };
+        };
 
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Error: Unable to configure database: %s", ex.getMessage()), ex);
-        }
+        DatabaseManager.configureDatabase(createStatements);
     }
 }
