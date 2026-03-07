@@ -106,7 +106,7 @@ public class GameServiceTests {
         Assertions.assertThrows(UnauthorizedException.class,
                 () -> sharedGameService.joinGame("123", new JoinRequest(ChessGame.TeamColor.WHITE, 0)));
 
-        Assertions.assertThrows(DataAccessException.class,
+        Assertions.assertThrows(BadRequestException.class,
                 () -> sharedGameService.joinGame(authToken,
                         new JoinRequest(ChessGame.TeamColor.WHITE, 0)));
 

@@ -40,7 +40,7 @@ public class UserDAOMySQLTests {
     public void createUserFailure() throws DataAccessException {
         UserData newUser2 = new UserData("Bob", "password", "email");
 
-        Assertions.assertThrows(DataAccessException.class, () -> sharedUserDAO.createUser(newUser2));
+        assertThrows(DataAccessException.class, () -> sharedUserDAO.createUser(newUser2));
     }
 
     @Test
