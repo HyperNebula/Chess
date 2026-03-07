@@ -9,9 +9,16 @@ public class Server {
     private final Javalin httpHandler;
 
     public Server() {
-        UserDAO sharedUserDAO = new UserDAOMemory();
-        AuthDAO sharedAuthDAO = new AuthDAOMemory();
-        GameDAO sharedGameDAO = new GameDAOMemory();
+        UserDAO sharedUserDAO = null;
+        AuthDAO sharedAuthDAO = null;
+        GameDAO sharedGameDAO = null;
+        try {
+            sharedUserDAO = new UserDAOMySQL();
+            sharedAuthDAO = new AuthDAOMySQL();
+            sharedGameDAO = new GameDAOMySQL();
+        } catch (DataAccessException ex) {
+            System.out.println("Error setting up database");
+        }
 
         UserService sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
         GameService sharedGameService = new GameService(sharedGameDAO, sharedAuthDAO);
@@ -28,7 +35,8 @@ public class Server {
                 .put("/game", sharedServerHandler::handleJoinGame)
                 .exception(AlreadyTakenException.class, sharedServerHandler::exceptionATHandler)
                 .exception(UnauthorizedException.class, sharedServerHandler::exceptionUAHandler)
-                .exception(DataAccessException.class, sharedServerHandler::exceptionDAHandler);
+                .exception(DataAccessException.class, sharedServerHandler::exceptionDAHandler)
+                .exception(BadRequestException.class, sharedServerHandler::exceptionBRHandler);
     }
 
     public int run(int desiredPort) {

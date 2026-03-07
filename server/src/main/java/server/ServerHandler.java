@@ -80,6 +80,11 @@ public class ServerHandler {
     }
 
     public void exceptionDAHandler(DataAccessException ex, Context ctx) {
+        ctx.status(500);
+        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
+    }
+
+    public void exceptionBRHandler(BadRequestException ex, Context ctx) {
         ctx.status(400);
         ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
