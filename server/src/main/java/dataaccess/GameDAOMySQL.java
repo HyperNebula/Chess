@@ -4,7 +4,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.DataModel.*;
 import service.AlreadyTakenException;
-import service.BadRequestException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
