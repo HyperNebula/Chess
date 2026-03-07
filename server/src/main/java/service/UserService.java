@@ -9,6 +9,7 @@ import dataaccess.UserDAO;
 import model.DataModel.*;
 import model.RequestModal.*;
 import model.ResultModal.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
 
@@ -24,6 +25,14 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
+    public static String generateHashedPassword(String clearTextPassword) {
+        return BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
+    }
+
+    public static boolean verifyUser(String clearTextPassword, String hashedPassword) {
+        return BCrypt.checkpw(clearTextPassword, hashedPassword);
+    }
+
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException {
         if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             throw new BadRequestException("Error: bad request");
@@ -32,7 +41,7 @@ public class UserService {
         if (userDB.getUser(registerRequest.username()) != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-        userDB.createUser(new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email()));
+        userDB.createUser(new UserData(registerRequest.username(), generateHashedPassword(registerRequest.password()), registerRequest.email()));
 
         String tempAuth = generateToken();
 
@@ -51,7 +60,7 @@ public class UserService {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
-        if (!Objects.equals(tempUserData.password(), loginRequest.password())) {
+        if (!verifyUser(loginRequest.password(), tempUserData.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
 

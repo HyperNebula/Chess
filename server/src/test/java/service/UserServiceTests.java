@@ -35,7 +35,7 @@ public class UserServiceTests {
         Assertions.assertEquals("Bob", result.username());
         Assertions.assertEquals("Bob", sharedAuthDAO.getAuth(result.authToken()).username());
 
-        Assertions.assertEquals(new UserData("Bob2", "password", "email"), sharedUserDAO.getUser("Bob2"));
+        Assertions.assertEquals("email", sharedUserDAO.getUser("Bob2").email());
 
     }
 
