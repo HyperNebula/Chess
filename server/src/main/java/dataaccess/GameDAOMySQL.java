@@ -51,10 +51,6 @@ public class GameDAOMySQL implements GameDAO {
     }
 
     public void joinGame(GameData game, ChessGame.TeamColor color, String username) throws DataAccessException {
-        //if (!gameDataStorage.contains(game)) {
-        //    throw new DataAccessException("Error: bad request");
-        //}
-
         if (color == null) {
             throw new DataAccessException("Error: bad request");
         }

@@ -12,33 +12,39 @@ public class GameServiceTests {
 
     private static GameService sharedGameService;
     private static UserService sharedUserService;
+    private static String authToken;
 
-    @BeforeEach
-    public void setup() {
-        GameDAO sharedGameDAO = new GameDAOMemory();
-        AuthDAO sharedAuthDAO = new AuthDAOMemory();
-        UserDAO sharedUserDAO = new UserDAOMemory();
+    @BeforeAll
+    public static void init() throws DataAccessException {
+        GameDAO sharedGameDAO = new GameDAOMySQL();
+        AuthDAO sharedAuthDAO = new AuthDAOMySQL();
+        UserDAO sharedUserDAO = new UserDAOMySQL();
+
+        sharedUserDAO.deleteAll();
+        sharedAuthDAO.deleteAll();
+        sharedGameDAO.deleteAll();
 
         sharedGameService = new GameService(sharedGameDAO, sharedAuthDAO);
         sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
+
+        RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
+        authToken = registerResult.authToken();
     }
 
     @Test
     @Order(1)
     @DisplayName("ListGames Success")
     public void listGamesSuccess() throws DataAccessException {
-        RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
+        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(authToken)).games().isEmpty());
 
-        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().isEmpty());
-
-        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
+        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(authToken, "Game"));
 
         Assertions.assertEquals(1,
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().size());
+                sharedGameService.listGames(new GamesRequest(authToken)).games().size());
         Assertions.assertEquals("Game",
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameName());
+                sharedGameService.listGames(new GamesRequest(authToken)).games().getFirst().gameName());
         Assertions.assertEquals(1,
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameID());
+                sharedGameService.listGames(new GamesRequest(authToken)).games().getFirst().gameID());
         Assertions.assertEquals(1, createGameResult.gameID());
     }
 
@@ -53,22 +59,20 @@ public class GameServiceTests {
     @Order(3)
     @DisplayName("CreateGames Success")
     public void createGamesSuccess() throws DataAccessException {
-        RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
-
-        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
-        CreateGameResult createGameResult2 = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game2"));
+        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(authToken, "Game2"));
+        CreateGameResult createGameResult2 = sharedGameService.createGame(new CreateGameRequest(authToken, "Game3"));
 
         Assertions.assertEquals("Game",
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameName());
+                sharedGameService.listGames(new GamesRequest(authToken)).games().getFirst().gameName());
         Assertions.assertEquals(1,
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().getFirst().gameID());
-        Assertions.assertEquals(1, createGameResult.gameID());
+                sharedGameService.listGames(new GamesRequest(authToken)).games().getFirst().gameID());
+        Assertions.assertEquals(2, createGameResult.gameID());
 
         Assertions.assertEquals("Game2",
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().get(1).gameName());
+                sharedGameService.listGames(new GamesRequest(authToken)).games().get(1).gameName());
         Assertions.assertEquals(2,
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().get(1).gameID());
-        Assertions.assertEquals(2, createGameResult2.gameID());
+                sharedGameService.listGames(new GamesRequest(authToken)).games().get(1).gameID());
+        Assertions.assertEquals(3, createGameResult2.gameID());
     }
 
     @Test
@@ -83,18 +87,16 @@ public class GameServiceTests {
     @Order(5)
     @DisplayName("Join Success")
     public void joinSuccess() throws DataAccessException {
-        RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
+        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(authToken, "Game4"));
 
-        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
-
-        JoinResult joinResult = sharedGameService.joinGame(registerResult.authToken(),
+        JoinResult joinResult = sharedGameService.joinGame(authToken,
                 new JoinRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID()));
 
         GameData testGameData =
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().get(createGameResult.gameID() - 1);
+                sharedGameService.listGames(new GamesRequest(authToken)).games().get(createGameResult.gameID() - 1);
 
         Assertions.assertTrue(joinResult.success());
-        Assertions.assertEquals(new GameData(createGameResult.gameID(), "Bob", null, "Game", new ChessGame()), testGameData);
+        Assertions.assertEquals(new GameData(createGameResult.gameID(), "Bob", null, "Game4", new ChessGame()), testGameData);
     }
 
     @Test
@@ -104,50 +106,43 @@ public class GameServiceTests {
         Assertions.assertThrows(UnauthorizedException.class,
                 () -> sharedGameService.joinGame("123", new JoinRequest(ChessGame.TeamColor.WHITE, 0)));
 
-        RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
-
         Assertions.assertThrows(DataAccessException.class,
-                () -> sharedGameService.joinGame(registerResult.authToken(),
+                () -> sharedGameService.joinGame(authToken,
                         new JoinRequest(ChessGame.TeamColor.WHITE, 0)));
 
-        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "game"));
-        sharedGameService.joinGame(registerResult.authToken(), new JoinRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID()));
+        CreateGameResult createGameResult = sharedGameService.createGame(new CreateGameRequest(authToken, "game5"));
+        sharedGameService.joinGame(authToken, new JoinRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID()));
 
-        sharedUserService.logout(new LogoutRequest(registerResult.authToken()));
+        //sharedUserService.logout(new LogoutRequest(authToken));
         RegisterResult registerResult2 = sharedUserService.register(new RegisterRequest("Bob2", "password", "email"));
 
         Assertions.assertThrows(AlreadyTakenException.class,
                 () -> sharedGameService.joinGame(registerResult2.authToken(),
                         new JoinRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID())));
         sharedGameService.joinGame(registerResult2.authToken(), new JoinRequest(ChessGame.TeamColor.BLACK, createGameResult.gameID()));
-
     }
 
     @Test
     @Order(7)
     @DisplayName("Delete Success")
     public void deleteSuccess() throws DataAccessException {
-        RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
+        sharedGameService.createGame(new CreateGameRequest(authToken, "Game6"));
 
-        sharedGameService.createGame(new CreateGameRequest(registerResult.authToken(), "Game"));
-
-        Assertions.assertEquals(1,
-                sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().size());
+        Assertions.assertNotEquals(0,
+                sharedGameService.listGames(new GamesRequest(authToken)).games().size());
 
         sharedGameService.deleteAllGames();
 
-        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().isEmpty());
+        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(authToken)).games().isEmpty());
     }
 
     @Test
     @Order(8)
     @DisplayName("Delete Failure")
     public void deleteFailure() throws DataAccessException {
-        RegisterResult registerResult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
-
         sharedGameService.deleteAllGames();
 
-        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(registerResult.authToken())).games().isEmpty());
+        Assertions.assertTrue(sharedGameService.listGames(new GamesRequest(authToken)).games().isEmpty());
     }
 
 }

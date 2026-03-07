@@ -51,6 +51,10 @@ public class GameService {
 
         GameData tempOldGame = gameDB.getGame(joinRequest.gameID());
 
+        if (tempOldGame == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
         gameDB.joinGame(tempOldGame, joinRequest.playerColor(), tempAuthData.username());
 
         return new JoinResult(true);
