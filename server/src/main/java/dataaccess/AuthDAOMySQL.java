@@ -22,7 +22,7 @@ public class AuthDAOMySQL implements AuthDAO {
                 }
             }
         } catch (Exception ex) {
-            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
         }
         return null;
     }
@@ -37,7 +37,7 @@ public class AuthDAOMySQL implements AuthDAO {
                 ps.executeUpdate();
             }
         } catch (Exception ex) {
-            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
         }
     }
 
@@ -49,7 +49,7 @@ public class AuthDAOMySQL implements AuthDAO {
                 ps.executeUpdate();
             }
         } catch (Exception ex) {
-            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
         }
     }
 
@@ -60,7 +60,7 @@ public class AuthDAOMySQL implements AuthDAO {
                 ps.executeUpdate();
             }
         } catch (Exception ex) {
-            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
         }
     }
 
@@ -90,7 +90,7 @@ public class AuthDAOMySQL implements AuthDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to configure database: %s", ex.getMessage()), ex);
         }
     }
 }

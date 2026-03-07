@@ -70,7 +70,7 @@ public class GameDAOMySQL implements GameDAO {
                     ps.executeUpdate();
                 }
             } catch (Exception ex) {
-                throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+                throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
             }
         } else {
             if (game.blackUsername() != null) {
@@ -86,7 +86,7 @@ public class GameDAOMySQL implements GameDAO {
                     ps.executeUpdate();
                 }
             } catch (Exception ex) {
-                throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+                throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
             }
         }
     }
@@ -112,7 +112,7 @@ public class GameDAOMySQL implements GameDAO {
                 return 0;
             }
         } catch (Exception ex) {
-            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
         }
     }
 
@@ -123,7 +123,7 @@ public class GameDAOMySQL implements GameDAO {
                 ps.executeUpdate();
             }
         } catch (Exception ex) {
-            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", ex.getMessage()), ex);
         }
     }
 
@@ -160,7 +160,7 @@ public class GameDAOMySQL implements GameDAO {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()), ex);
+            throw new DataAccessException(String.format("Error: Unable to configure database: %s", ex.getMessage()), ex);
         }
     }
 }
