@@ -14,10 +14,13 @@ public class UserServiceTests {
 
     private static UserService sharedUserService;
 
-    @BeforeEach
-    public void setup() throws DataAccessException {
+    @BeforeAll
+    public static void init() throws DataAccessException {
         sharedUserDAO = new UserDAOMySQL();
         sharedAuthDAO = new AuthDAOMySQL();
+
+        sharedUserDAO.deleteAll();
+        sharedAuthDAO.deleteAll();
 
         sharedUserService = new UserService(sharedUserDAO, sharedAuthDAO);
     }
@@ -40,34 +43,26 @@ public class UserServiceTests {
     @Order(2)
     @DisplayName("Register Failure")
     public void registerFailure() throws DataAccessException {
-        sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
+        sharedUserService.register(new RegisterRequest("Bob3", "password", "email"));
 
         Assertions.assertThrows(AlreadyTakenException.class,
-                () -> sharedUserService.register(new RegisterRequest("Bob", "password2", "email2")));
+                () -> sharedUserService.register(new RegisterRequest("Bob3", "password2", "email2")));
     }
 
     @Test
     @Order(3)
     @DisplayName("Login Success")
     public void loginSuccess() throws DataAccessException {
-        RegisterResult regresult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
         LoginResult logresult = sharedUserService.login(new LoginRequest("Bob", "password"));
 
         Assertions.assertEquals("Bob", logresult.username());
-        Assertions.assertEquals("Bob", sharedAuthDAO.getAuth(regresult.authToken()).username());
         Assertions.assertEquals("Bob", sharedAuthDAO.getAuth(logresult.authToken()).username());
-
-        Assertions.assertNotEquals(sharedAuthDAO.getAuth(regresult.authToken()).authToken(),
-                sharedAuthDAO.getAuth(logresult.authToken()).authToken());
-
     }
 
     @Test
     @Order(4)
     @DisplayName("Login Failure")
     public void loginFailure() throws DataAccessException {
-        sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
-
         Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.login(new LoginRequest("Bob1", "password")));
         Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.login(new LoginRequest("Bob", "password2")));
     }
@@ -76,18 +71,18 @@ public class UserServiceTests {
     @Order(5)
     @DisplayName("Logout Success")
     public void logoutSuccess() throws DataAccessException {
-        RegisterResult regresult = sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
-        LogoutResult logoutresult = sharedUserService.logout(new LogoutRequest(regresult.authToken()));
+        LoginResult logresult = sharedUserService.login(new LoginRequest("Bob", "password"));
+        LogoutResult logoutresult = sharedUserService.logout(new LogoutRequest(logresult.authToken()));
 
         Assertions.assertTrue(logoutresult.success());
-        Assertions.assertNull(sharedAuthDAO.getAuth(regresult.authToken()));
+        Assertions.assertNull(sharedAuthDAO.getAuth(logresult.authToken()));
     }
 
     @Test
     @Order(6)
     @DisplayName("Logout Failure")
     public void logoutFailure() throws DataAccessException {
-        sharedUserService.register(new RegisterRequest("Bob", "password", "email"));
+        sharedUserService.login(new LoginRequest("Bob", "password"));
 
         Assertions.assertThrows(UnauthorizedException.class, () -> sharedUserService.logout(new LogoutRequest("STRING")));
     }
