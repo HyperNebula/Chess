@@ -1,8 +1,11 @@
 package client;
 
 import chess.*;
+import model.DataModel;
+
 import static client.WebClient.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -14,6 +17,8 @@ public class ClientMain {
 
     public static String username;
     public static String authToken;
+
+    private static List<DataModel.GameData> listOfGames;
 
     public static void main(String[] args) throws Exception {
         // var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
@@ -87,8 +92,24 @@ public class ClientMain {
                         playing = false;
                         break;
                     case "list":
-                        listGames();
-                        break;
+                        List<DataModel.GameData> tempGameList = listGames();
+
+                        listOfGames = tempGameList;
+
+                        if (tempGameList.isEmpty()) {
+                            System.out.println("\tNo games created. Used the command '" + SET_TEXT_COLOR_GREEN + "create" + RESET_TEXT_COLOR + "' to create a new game." );
+                            break;
+                        } else {
+                            System.out.println("\tCreated games and their ID:");
+                            for (int i = 0; i < tempGameList.size(); i++) {
+                                System.out.println(SET_TEXT_COLOR_YELLOW + "\t" + (i + 1) + ": " + tempGameList.get(i).gameName() + RESET_TEXT_COLOR);
+                                System.out.println("\t\tPlayers in the game - White: " + SET_TEXT_COLOR_YELLOW
+                                        + (tempGameList.get(i).whiteUsername() != null ? tempGameList.get(i).whiteUsername() : "None")
+                                        + RESET_TEXT_COLOR + " Black: " + SET_TEXT_COLOR_YELLOW
+                                        + (tempGameList.get(i).blackUsername() != null ? tempGameList.get(i).blackUsername() : "None") + RESET_TEXT_COLOR);
+                            }
+                            break;
+                        }
                     case "join":
                         if (input.length != 3 && (Objects.equals(input[2], "WHITE") || Objects.equals(input[2], "BLACK")) && isInteger(input[1])) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "join <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
