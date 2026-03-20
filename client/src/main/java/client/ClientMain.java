@@ -1,6 +1,7 @@
 package client;
 
 import chess.*;
+import static client.WebClient.*;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -40,16 +41,20 @@ public class ClientMain {
                         if (input.length != 3) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "login <USERNAME> <PASSWORD>" + RESET_TEXT_COLOR);
                         } else {
-                            login(input);
-                            System.out.println("♕ Logged in as " + username + ". Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of available commands.");
+                            if (login(input)) {
+                                loggedIn = true;
+                                System.out.println("♕ Logged in as " + username + ". Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of available commands.");
+                            }
                         }
                         break;
                     case "register":
                         if (input.length != 4) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "register <USERNAME> <PASSWORD> <EMAIL>" + RESET_TEXT_COLOR);
                         } else {
-                            register(input);
-                            System.out.println("♕ Created account and logged in as " + username + ". Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of available commands.");
+                            if (register(input)) {
+                                loggedIn = true;
+                                System.out.println("♕ Created account and logged in as " + username + ". Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of available commands.");
+                            }
                         }
                         break;
                     default:
@@ -85,14 +90,14 @@ public class ClientMain {
                         listGames();
                         break;
                     case "join":
-                        if (input.length != 3 && (Objects.equals(input[2], "WHITE") || Objects.equals(input[2], "BLACK"))) {
+                        if (input.length != 3 && (Objects.equals(input[2], "WHITE") || Objects.equals(input[2], "BLACK")) && isInteger(input[1])) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "join <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
                         } else {
                             joinGame(input);
                         }
                         break;
                     case "observe":
-                        if (input.length != 2){
+                        if (input.length != 2 && isInteger(input[1])){
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "observe <ID>" + RESET_TEXT_COLOR);
                         } else {
                             observeGame(input);
@@ -113,42 +118,17 @@ public class ClientMain {
         }
     }
 
-    private static void login(String[] input) {
-        String username = input[1];
-        String password = input[2];
 
-        loggedIn = true;
-    }
 
-    private static void register(String[] input) {
-        String username = input[1];
-        String password = input[2];
-        String email = input[3];
-
-        loggedIn = true;
-    }
-
-    private static void logout() {
-
-    }
-
-    private static void createGame(String[] input) {
-        String name = input[1];
-
-    }
-
-    private static void listGames() {
-
-    }
-
-    private static void joinGame(String[] input) {
-        String ID = input[1];
-        String teamColor = input[2];
-
-    }
-
-    private static void observeGame(String[] input) {
-        String ID = input[1];
-
+    public static boolean isInteger(String str) {
+        if (str == null || str.isBlank()) {
+            return false;
+        }
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
