@@ -1,9 +1,39 @@
 package client;
+import model.RequestModal.*;
+
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class WebClient {
-    public static boolean login(String[] input) {
-        String username = input[1];
-        String password = input[2];
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
+
+    private static final String mainURL = "http://localhost:8080";
+
+    public static boolean login(String[] input) throws Exception {
+        LoginRequest loginRequest = new LoginRequest(input[1], input[2]);
+
+        String tempJSONBody = new Gson().toJson(loginRequest);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(mainURL + "/session"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(tempJSONBody))
+                //.timeout(java.time.Duration.ofMillis(5000))
+                .build();
+
+        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (httpResponse.statusCode() == 200) {
+            System.out.println(httpResponse.body());
+        } else {
+            System.out.println("Error: received status code " + httpResponse.statusCode());
+        }
 
         return true;
     }
