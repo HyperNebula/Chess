@@ -137,18 +137,18 @@ public class WebClient {
         return null;
     }
 
-    public static void joinGame(String[] input) throws Exception{
+    public static ChessGame joinGame(String[] input) throws Exception{
         String teamColor = input[2];
         JoinRequest joinRequest;
 
         ClientMain.listOfGames = listGames();
 
         if  (ClientMain.listOfGames == null) {
-            return;
+            return null;
         }
         else if (ClientMain.listOfGames.isEmpty()) {
             System.out.println(SET_TEXT_COLOR_RED  + "\tNo games exist. Create a game first and then join it." + RESET_TEXT_COLOR);
-            return;
+            return null;
         }
 
         int tempGameID = Integer.parseInt(input[1]);
@@ -156,9 +156,19 @@ public class WebClient {
         int realGameID = ClientMain.listOfGames.get(tempGameID-1).gameID();
 
         if (Objects.equals(teamColor, "white")) {
-            joinRequest = new JoinRequest(ChessGame.TeamColor.WHITE, realGameID);
+            if (Objects.equals(ClientMain.listOfGames.get(tempGameID - 1).whiteUsername(), ClientMain.username)) {
+                System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
+                return ClientMain.listOfGames.get(tempGameID-1).game();
+            } else {
+                joinRequest = new JoinRequest(ChessGame.TeamColor.WHITE, realGameID);
+            }
         } else {
-            joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, realGameID);
+            if (Objects.equals(ClientMain.listOfGames.get(tempGameID - 1).blackUsername(), ClientMain.username)) {
+                System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
+                return ClientMain.listOfGames.get(tempGameID-1).game();
+            } else {
+                joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, realGameID);
+            }
         }
 
         String tempJSONBody = new Gson().toJson(joinRequest);
@@ -175,6 +185,7 @@ public class WebClient {
 
         if (httpResponse.statusCode() == 200) {
             System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
+            return ClientMain.listOfGames.get(tempGameID-1).game();
         } else if (httpResponse.statusCode() == 401) {
             System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
         } else if (httpResponse.statusCode() == 403) {
@@ -182,10 +193,22 @@ public class WebClient {
         } else {
             System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
         }
+        return null;
     }
 
-    public static void observeGame(String[] input) {
-        String ID = input[1];
+    public static ChessGame observeGame(String[] input) throws Exception {
+        ClientMain.listOfGames = listGames();
 
+        if  (ClientMain.listOfGames == null) {
+            return null;
+        }
+        else if (ClientMain.listOfGames.isEmpty()) {
+            System.out.println(SET_TEXT_COLOR_RED  + "\tNo games exist. Create a game first and then observe it." + RESET_TEXT_COLOR);
+            return null;
+        }
+
+        int tempGameID = Integer.parseInt(input[1]);
+
+        return ClientMain.listOfGames.get(tempGameID-1).game();
     }
 }

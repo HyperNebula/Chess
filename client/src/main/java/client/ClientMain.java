@@ -19,6 +19,7 @@ public class ClientMain {
     public static String authToken;
 
     public static List<DataModel.GameData> listOfGames;
+    private static ChessGame game;
 
     public static void main(String[] args) throws Exception {
         // var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
@@ -27,7 +28,7 @@ public class ClientMain {
 
         System.out.println("♕ Welcome to CS240 Chess Client. Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of commands.");
         while (true) {
-            if (!loggedIn) {
+            if (!loggedIn && !playing) {
                 System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_OUT]" + RESET_TEXT_COLOR + " >>> ");
                 String[] input = scanner.nextLine().toLowerCase().split(" ");
 
@@ -66,9 +67,7 @@ public class ClientMain {
                         System.out.println("\tNot a valid command. Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of commands.");
                         break;
                 }
-            }
-
-            if (loggedIn && !playing) {
+            } else if (loggedIn && !playing) {
                 System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                 String[] input = scanner.nextLine().toLowerCase().split(" ");
 
@@ -116,14 +115,20 @@ public class ClientMain {
                         if (input.length != 3 && (Objects.equals(input[2], "white") || Objects.equals(input[2], "black")) && isInteger(input[1])) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "join <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
                         } else {
-                            joinGame(input);
+                            game = joinGame(input);
+                            if (game != null) {
+                                playing = true;
+                            }
                         }
                         break;
                     case "observe":
                         if (input.length != 2 && isInteger(input[1])){
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "observe <ID>" + RESET_TEXT_COLOR);
                         } else {
-                            observeGame(input);
+                            game = observeGame(input);
+                            if (game != null) {
+                                playing = true;
+                            }
                         }
                         break;
                     case "create":
@@ -137,6 +142,11 @@ public class ClientMain {
                         System.out.println("\tNot a valid command. Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of commands.");
                         break;
                 }
+            } else if (loggedIn && playing) {
+                System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
+                String[] input = scanner.nextLine().toLowerCase().split(" ");
+            } else {
+                System.out.println("Error. Unknown state. Relaunch the program.");
             }
         }
     }
