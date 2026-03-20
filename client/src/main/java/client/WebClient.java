@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import model.DataModel;
 import model.RequestModal.*;
 import model.ResultModal.*;
@@ -12,6 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Objects;
 
 
 public class WebClient {
@@ -124,15 +126,62 @@ public class WebClient {
 
         HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        GamesResult gamesResult = new Gson().fromJson(httpResponse.body(), GamesResult.class);
-
-        return gamesResult.games();
+        if (httpResponse.statusCode() == 200) {
+            GamesResult gamesResult = new Gson().fromJson(httpResponse.body(), GamesResult.class);
+            return gamesResult.games();
+        } else if (httpResponse.statusCode() == 401) {
+            System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
+        } else {
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+        }
+        return null;
     }
 
-    public static void joinGame(String[] input) {
-        String ID = input[1];
+    public static void joinGame(String[] input) throws Exception{
         String teamColor = input[2];
+        JoinRequest joinRequest;
 
+        ClientMain.listOfGames = listGames();
+
+        if  (ClientMain.listOfGames == null) {
+            return;
+        }
+        else if (ClientMain.listOfGames.isEmpty()) {
+            System.out.println(SET_TEXT_COLOR_RED  + "\tNo games exist. Create a game first and then join it." + RESET_TEXT_COLOR);
+            return;
+        }
+
+        int tempGameID = Integer.parseInt(input[1]);
+
+        int realGameID = ClientMain.listOfGames.get(tempGameID-1).gameID();
+
+        if (Objects.equals(teamColor, "white")) {
+            joinRequest = new JoinRequest(ChessGame.TeamColor.WHITE, realGameID);
+        } else {
+            joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, realGameID);
+        }
+
+        String tempJSONBody = new Gson().toJson(joinRequest);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(mainURL + "/game"))
+                .header("authorization", ClientMain.authToken)
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(tempJSONBody))
+                .timeout(java.time.Duration.ofMillis(5000))
+                .build();
+
+        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (httpResponse.statusCode() == 200) {
+            System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
+        } else if (httpResponse.statusCode() == 401) {
+            System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
+        } else if (httpResponse.statusCode() == 403) {
+            System.out.println(SET_TEXT_COLOR_RED  + "\tThat game spot is full. Join a different game or as a different side." + RESET_TEXT_COLOR);
+        } else {
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+        }
     }
 
     public static void observeGame(String[] input) {

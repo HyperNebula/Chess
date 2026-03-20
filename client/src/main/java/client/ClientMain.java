@@ -18,7 +18,7 @@ public class ClientMain {
     public static String username;
     public static String authToken;
 
-    private static List<DataModel.GameData> listOfGames;
+    public static List<DataModel.GameData> listOfGames;
 
     public static void main(String[] args) throws Exception {
         // var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
@@ -96,7 +96,9 @@ public class ClientMain {
 
                         listOfGames = tempGameList;
 
-                        if (tempGameList.isEmpty()) {
+                        if (tempGameList == null) {
+                            break;
+                        } else if (tempGameList.isEmpty()) {
                             System.out.println("\tNo games created. Used the command '" + SET_TEXT_COLOR_GREEN + "create" + RESET_TEXT_COLOR + "' to create a new game." );
                             break;
                         } else {
@@ -111,7 +113,7 @@ public class ClientMain {
                             break;
                         }
                     case "join":
-                        if (input.length != 3 && (Objects.equals(input[2], "WHITE") || Objects.equals(input[2], "BLACK")) && isInteger(input[1])) {
+                        if (input.length != 3 && (Objects.equals(input[2], "white") || Objects.equals(input[2], "black")) && isInteger(input[1])) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "join <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
                         } else {
                             joinGame(input);
