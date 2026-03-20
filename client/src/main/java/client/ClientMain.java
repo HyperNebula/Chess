@@ -145,8 +145,27 @@ public class ClientMain {
             } else if (loggedIn && playing) {
                 System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
                 String[] input = scanner.nextLine().toLowerCase().split(" ");
+                switch (input[0]) {
+                    case "quit":
+                        System.out.println("\tExiting...");
+                        System.exit(0);
+                        break;
+                    case "help":
+                        System.out.println(SET_TEXT_COLOR_YELLOW + "\tleave" + RESET_TEXT_COLOR + " - leave the current game");
+                        System.out.println(SET_TEXT_COLOR_YELLOW + "\thelp" + RESET_TEXT_COLOR + " - Displays possible commands");
+                        System.out.println(SET_TEXT_COLOR_YELLOW + "\tquit" + RESET_TEXT_COLOR + " - Exits the program.");
+                        break;
+                    case "leave":
+                        loggedIn = true;
+                        playing = false;
+                        break;
+                    default:
+                        System.out.println("\tNot a valid command. Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of commands.");
+                        break;
+                }
             } else {
                 System.out.println("Error. Unknown state. Relaunch the program.");
+                System.exit(1);
             }
         }
     }
