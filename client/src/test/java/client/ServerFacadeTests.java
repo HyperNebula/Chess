@@ -18,7 +18,9 @@ public class ServerFacadeTests {
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer() throws Exception {
+        WebClient.clear();
+
         server.stop();
     }
 
@@ -54,6 +56,71 @@ public class ServerFacadeTests {
     void loginFailure() throws Exception {
         var authData2 = WebClient.login(new String[]{"login", "player2", "password2", "p1@email.com"});
         Assertions.assertNull(authData2);
+    }
+
+    @Test
+    void logoutSuccess() throws Exception {
+        var authData = WebClient.register(new String[]{"Register", "logoutUser", "password", "email"});
+
+        Assertions.assertNotNull(authData);
+        Assertions.assertDoesNotThrow(() -> WebClient.logout(authData.authToken()));
+
+        var games = WebClient.listGames(authData.authToken());
+        Assertions.assertNull(games);
+    }
+
+    @Test
+    void logoutFailure() throws Exception {
+        Assertions.assertDoesNotThrow(() -> WebClient.logout("fake-auth-token"));
+    }
+
+    @Test
+    void createGameSuccess() throws Exception {
+        var authData = WebClient.register(new String[]{"Register", "createGameUser", "password", "email"});
+
+        Assertions.assertNotNull(authData);
+        WebClient.createGame(authData.authToken(), new String[]{"create", "myAwesomeGame"});
+
+        var games = WebClient.listGames(authData.authToken());
+        Assertions.assertNotNull(games);
+        boolean gameFound = games.stream().anyMatch(g -> g.gameName().equals("myAwesomeGame"));
+        Assertions.assertTrue(gameFound);
+    }
+
+    @Test
+    void createGameFailure() throws Exception {
+        Assertions.assertDoesNotThrow(() ->
+                WebClient.createGame("invalid-token", new String[]{"create", "ghostGame"})
+        );
+
+        var authData = WebClient.register(new String[]{"Register", "verifyUser", "password", "email"});
+
+        Assertions.assertNotNull(authData);
+        var games = WebClient.listGames(authData.authToken());
+
+        if (games != null) {
+            boolean gameFound = games.stream().anyMatch(g -> g.gameName().equals("ghostGame"));
+            Assertions.assertFalse(gameFound);
+        }
+    }
+
+    @Test
+    void listGamesSuccess() throws Exception {
+        var authData = WebClient.register(new String[]{"Register", "listGamesUser", "password", "email"});
+        Assertions.assertNotNull(authData);
+        WebClient.createGame(authData.authToken(), new String[]{"create", "listGame1"});
+        WebClient.createGame(authData.authToken(), new String[]{"create", "listGame2"});
+
+        var games = WebClient.listGames(authData.authToken());
+
+        Assertions.assertNotNull(games);
+        Assertions.assertTrue(games.size() >= 2);
+    }
+
+    @Test
+    void listGamesFailure() throws Exception {
+        var games = WebClient.listGames("bad-token-123");
+        Assertions.assertNull(games);
     }
 
 }
