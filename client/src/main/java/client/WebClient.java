@@ -21,6 +21,16 @@ public class WebClient {
 
     private static final String mainURL = "http://localhost:8080";
 
+    public static void clear() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(mainURL + "/db"))
+                .DELETE()
+                .timeout(java.time.Duration.ofMillis(5000))
+                .build();
+
+        httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
     public static RegisterResult register(String[] input) throws Exception{
         RegisterRequest registerRequest = new RegisterRequest(input[1], input[2], input[3]);
 
