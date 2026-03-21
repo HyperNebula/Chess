@@ -19,7 +19,12 @@ import java.util.Objects;
 public class WebClient {
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
-    private static final String MAIN_URL = "http://localhost:8080";
+    private static String MAIN_URL = "http://localhost:8080";
+
+
+    public WebClient(int port) {
+        MAIN_URL = "http://localhost:" + port;
+    }
 
     public static void clear() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
