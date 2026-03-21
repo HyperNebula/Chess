@@ -17,18 +17,18 @@ import java.util.Objects;
 
 
 public class WebClient {
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
-    private static final String mainURL = "http://localhost:8080";
+    private static final String MAIN_URL = "http://localhost:8080";
 
     public static void clear() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(mainURL + "/db"))
+                .uri(new URI(MAIN_URL + "/db"))
                 .DELETE()
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
 
-        httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public static RegisterResult register(String[] input) throws Exception{
@@ -37,21 +37,23 @@ public class WebClient {
         String tempJSONBody = new Gson().toJson(registerRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(mainURL + "/user"))
+                .uri(new URI(MAIN_URL + "/user"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(tempJSONBody))
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
 
-        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (httpResponse.statusCode() == 200) {
             return new Gson().fromJson(httpResponse.body(), RegisterResult.class);
         } else if (httpResponse.statusCode() == 403) {
-            System.out.println(SET_TEXT_COLOR_RED  + "\tUsername '" + input[1] + "' already taken. Try again with another username." + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "\tUsername '" + input[1]
+                    + "' already taken. Try again with another username." + RESET_TEXT_COLOR);
             return null;
         } else {
-            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code "
+                    + httpResponse.statusCode() + RESET_TEXT_COLOR);
             return null;
         }
     }
@@ -62,73 +64,77 @@ public class WebClient {
         String tempJSONBody = new Gson().toJson(loginRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(mainURL + "/session"))
+                .uri(new URI(MAIN_URL + "/session"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(tempJSONBody))
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
 
-        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (httpResponse.statusCode() == 200) {
             return new Gson().fromJson(httpResponse.body(), LoginResult.class);
         } else if (httpResponse.statusCode() == 401) {
-            System.out.println(SET_TEXT_COLOR_RED  + "\tIncorrect username or password. Try again." + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "\tIncorrect username or password. Try again."
+                    + RESET_TEXT_COLOR);
             return null;
         } else {
-            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode()
+                    + RESET_TEXT_COLOR);
             return null;
         }
     }
 
     public static void logout(String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(mainURL + "/session"))
+                .uri(new URI(MAIN_URL + "/session"))
                 .header("authorization", authToken)
                 .DELETE()
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
 
-        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (httpResponse.statusCode() == 200) {
             System.out.println(SET_TEXT_COLOR_GREEN + "\tSuccessfully logged out." + RESET_TEXT_COLOR);
         } else if (httpResponse.statusCode() == 401) {
             System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
         } else {
-            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode()
+                    + RESET_TEXT_COLOR);
         }
     }
 
     public static void createGame(String authToken, String[] input) throws Exception{
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(mainURL + "/game"))
+                .uri(new URI(MAIN_URL + "/game"))
                 .header("authorization", authToken)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{ \"gameName\" : \"" + input[1] + "\" }"))
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
 
-        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (httpResponse.statusCode() == 200) {
             System.out.println(SET_TEXT_COLOR_GREEN + "\tSuccessfully created game." + RESET_TEXT_COLOR);
         } else if (httpResponse.statusCode() == 401) {
             System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
         } else {
-            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode()
+                    + RESET_TEXT_COLOR);
         }
     }
 
     public static List<DataModel.GameData> listGames(String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(mainURL + "/game"))
+                .uri(new URI(MAIN_URL + "/game"))
                 .header("authorization", authToken)
                 .GET()
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
 
-        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (httpResponse.statusCode() == 200) {
             GamesResult gamesResult = new Gson().fromJson(httpResponse.body(), GamesResult.class);
@@ -136,7 +142,8 @@ public class WebClient {
         } else if (httpResponse.statusCode() == 401) {
             System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
         } else {
-            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode()
+                    + RESET_TEXT_COLOR);
         }
         return null;
     }
@@ -151,7 +158,8 @@ public class WebClient {
             return null;
         }
         else if (gameList.isEmpty()) {
-            System.out.println(SET_TEXT_COLOR_RED  + "\tNo games exist. Create a game first and then join it." + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "\tNo games exist. Create a game first and then join it."
+                    + RESET_TEXT_COLOR);
             return null;
         }
 
@@ -183,14 +191,14 @@ public class WebClient {
         String tempJSONBody = new Gson().toJson(joinRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(mainURL + "/game"))
+                .uri(new URI(MAIN_URL + "/game"))
                 .header("authorization", authToken)
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(tempJSONBody))
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
 
-        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (httpResponse.statusCode() == 200) {
             System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
@@ -198,9 +206,11 @@ public class WebClient {
         } else if (httpResponse.statusCode() == 401) {
             System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
         } else if (httpResponse.statusCode() == 403) {
-            System.out.println(SET_TEXT_COLOR_RED  + "\tThat game spot is full. Join a different game or as a different side." + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED
+                    + "\tThat game spot is full. Join a different game or as a different side." + RESET_TEXT_COLOR);
         } else {
-            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode() + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "Error: received status code " + httpResponse.statusCode()
+                    + RESET_TEXT_COLOR);
         }
         return null;
     }
@@ -212,7 +222,8 @@ public class WebClient {
             return null;
         }
         else if (gameList.isEmpty()) {
-            System.out.println(SET_TEXT_COLOR_RED  + "\tNo games exist. Create a game first and then observe it." + RESET_TEXT_COLOR);
+            System.out.println(SET_TEXT_COLOR_RED  + "\tNo games exist. Create a game first and then observe it."
+                    + RESET_TEXT_COLOR);
             return null;
         }
 
