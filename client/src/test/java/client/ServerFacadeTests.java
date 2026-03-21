@@ -70,7 +70,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void logoutFailure() throws Exception {
+    void logoutFailure() {
         Assertions.assertDoesNotThrow(() -> WebClient.logout("fake-auth-token"));
     }
 
@@ -121,6 +121,61 @@ public class ServerFacadeTests {
     void listGamesFailure() throws Exception {
         var games = WebClient.listGames("bad-token-123");
         Assertions.assertNull(games);
+    }
+
+    @Test
+    void joinGameSuccess() throws Exception {
+        var authData = WebClient.register(new String[]{"Register", "joinUser1", "password", "email"});
+        Assertions.assertNotNull(authData);
+        WebClient.createGame(authData.authToken(), new String[]{"create", "joinGameSuccess"});
+
+        var games = WebClient.listGames(authData.authToken());
+        Assertions.assertNotNull(games);
+        int gameIndex = games.size();
+
+        var game = WebClient.joinGame(authData.authToken(), authData.username(), new String[]{"join", String.valueOf(gameIndex), "white"});
+
+        Assertions.assertNotNull(game);
+    }
+
+    @Test
+    void joinGameFailure() throws Exception {
+        var authData1 = WebClient.register(new String[]{"Register", "joinUserWhite", "password", "email"});
+        var authData2 = WebClient.register(new String[]{"Register", "joinUserThief", "password", "email"});
+
+        Assertions.assertNotNull(authData1);
+        Assertions.assertNotNull(authData2);
+        WebClient.createGame(authData1.authToken(), new String[]{"create", "joinGameFail"});
+        var games = WebClient.listGames(authData1.authToken());
+        Assertions.assertNotNull(games);
+        int gameIndex = games.size();
+
+        WebClient.joinGame(authData1.authToken(), authData1.username(), new String[]{"join", String.valueOf(gameIndex), "white"});
+
+        var failedGame = WebClient.joinGame(authData2.authToken(), authData2.username(), new String[]{"join", String.valueOf(gameIndex), "white"});
+
+        Assertions.assertNull(failedGame);
+    }
+
+    @Test
+    void observeGameSuccess() throws Exception {
+        var authData = WebClient.register(new String[]{"Register", "observeUser", "password", "email"});
+        Assertions.assertNotNull(authData);
+        WebClient.createGame(authData.authToken(), new String[]{"create", "observeGameTest"});
+
+        var games = WebClient.listGames(authData.authToken());
+        Assertions.assertNotNull(games);
+        int gameIndex = games.size();
+
+        var game = WebClient.observeGame(authData.authToken(), new String[]{"observe", String.valueOf(gameIndex)});
+
+        Assertions.assertNotNull(game);
+    }
+
+    @Test
+    void observeGameFailure() throws Exception {
+        var game = WebClient.observeGame("bad-auth-token", new String[]{"observe", "1"});
+        Assertions.assertNull(game, "Should return null due to invalid authorization.");
     }
 
 }
