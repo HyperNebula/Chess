@@ -2,6 +2,7 @@ package client;
 
 import chess.*;
 import model.DataModel;
+import model.ResultModal.*;
 
 import static client.WebClient.*;
 
@@ -16,7 +17,7 @@ public class ClientMain {
     private static boolean playing = false;
 
     public static String username;
-    public static String authToken;
+    private static String authToken;
 
     public static List<DataModel.GameData> listOfGames;
     public static ChessGame game;
@@ -24,8 +25,6 @@ public class ClientMain {
     public static String teamColor = "white";
 
     public static void main(String[] args) throws Exception {
-        // var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        // System.out.println("♕ 240 Chess Client: " + piece);
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("♕ Welcome to CS240 Chess Client. Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of commands.");
@@ -49,7 +48,10 @@ public class ClientMain {
                         if (input.length != 3) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "login <USERNAME> <PASSWORD>" + RESET_TEXT_COLOR);
                         } else {
-                            if (login(input)) {
+                            LoginResult loginResult = login(input);
+                            if (loginResult != null) {
+                                ClientMain.username = loginResult.username();
+                                ClientMain.authToken = loginResult.authToken();
                                 loggedIn = true;
                                 System.out.println("♕ Logged in as " + username + ". Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of available commands.");
                             }
@@ -59,7 +61,10 @@ public class ClientMain {
                         if (input.length != 4) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "register <USERNAME> <PASSWORD> <EMAIL>" + RESET_TEXT_COLOR);
                         } else {
-                            if (register(input)) {
+                            RegisterResult registerResult = register(input);
+                            if (registerResult != null) {
+                                ClientMain.username = registerResult.username();
+                                ClientMain.authToken = registerResult.authToken();
                                 loggedIn = true;
                                 System.out.println("♕ Created account and logged in as " + username + ". Type '" + SET_TEXT_COLOR_GREEN + "help" + RESET_TEXT_COLOR + "' for a list of available commands.");
                             }
@@ -88,12 +93,12 @@ public class ClientMain {
                         System.out.println(SET_TEXT_COLOR_YELLOW + "\tquit" + RESET_TEXT_COLOR + " - Exits the program.");
                         break;
                     case "logout":
-                        logout();
+                        logout(authToken);
                         loggedIn = false;
                         playing = false;
                         break;
                     case "list":
-                        List<DataModel.GameData> tempGameList = listGames();
+                        List<DataModel.GameData> tempGameList = listGames(authToken);
 
                         listOfGames = tempGameList;
 
@@ -117,7 +122,7 @@ public class ClientMain {
                         if (input.length != 3 && (Objects.equals(input[2], "white") || Objects.equals(input[2], "black")) && isInteger(input[1])) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "join <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
                         } else {
-                            game = joinGame(input);
+                            game = joinGame(authToken, username, input);
                             if (game != null) {
                                 teamColor = input[2];
                                 playing = true;
@@ -128,7 +133,7 @@ public class ClientMain {
                         if (input.length != 2 && isInteger(input[1])){
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "observe <ID>" + RESET_TEXT_COLOR);
                         } else {
-                            game = observeGame(input);
+                            game = observeGame(authToken, input);
                             if (game != null) {
                                 playing = true;
                             }
@@ -138,7 +143,7 @@ public class ClientMain {
                         if (input.length != 2){
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "create <NAME>" + RESET_TEXT_COLOR);
                         } else {
-                            createGame(input);
+                            createGame(authToken, input);
                         }
                         break;
                     default:
