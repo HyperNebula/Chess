@@ -119,7 +119,7 @@ public class ClientMain {
                             break;
                         }
                     case "join":
-                        if (input.length != 3 && (Objects.equals(input[2], "white") || Objects.equals(input[2], "black")) && isInteger(input[1])) {
+                        if (input.length != 3 || (!Objects.equals(input[2], "white") && !Objects.equals(input[2], "black")) || !isInteger(input[1])) {
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "join <ID> [WHITE|BLACK]" + RESET_TEXT_COLOR);
                         } else {
                             game = joinGame(authToken, username, input);
@@ -130,7 +130,7 @@ public class ClientMain {
                         }
                         break;
                     case "observe":
-                        if (input.length != 2 && isInteger(input[1])){
+                        if (input.length != 2 || !isInteger(input[1])){
                             System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "observe <ID>" + RESET_TEXT_COLOR);
                         } else {
                             game = observeGame(authToken, input);
