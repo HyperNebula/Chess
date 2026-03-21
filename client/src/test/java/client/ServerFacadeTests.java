@@ -42,4 +42,18 @@ public class ServerFacadeTests {
         Assertions.assertNull(authData2);
     }
 
+    @Test
+    void loginSuccess() throws Exception {
+        var authData = WebClient.login(new String[]{"login", "player1", "password"});
+        Assertions.assertNotNull(authData);
+        Assertions.assertTrue(authData.authToken().length() > 10);
+        Assertions.assertEquals("player1", authData.username());
+    }
+
+    @Test
+    void loginFailure() throws Exception {
+        var authData2 = WebClient.login(new String[]{"login", "player2", "password2", "p1@email.com"});
+        Assertions.assertNull(authData2);
+    }
+
 }
