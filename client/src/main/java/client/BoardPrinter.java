@@ -63,7 +63,9 @@ public class BoardPrinter {
 
                 ChessPiece tempPiece = ClientMain.game.getBoard().getPiece(new ChessPosition(actualRow + 1, actualCol + 1));
                 if (tempPiece != null) {
-                    System.out.print(chooseSquareColor(row, col) + choosePieceColor(tempPiece.getTeamColor()) + choosePieceType(tempPiece.getPieceType()));
+                    System.out.print(chooseSquareColor(row, col)
+                            + choosePieceColor(tempPiece.getTeamColor())
+                            + choosePieceType(tempPiece.getPieceType()));
                 } else {
                     System.out.print(chooseSquareColor(row, col) + EMPTYC);
                 }
