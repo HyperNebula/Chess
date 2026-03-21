@@ -19,7 +19,9 @@ public class ClientMain {
     public static String authToken;
 
     public static List<DataModel.GameData> listOfGames;
-    private static ChessGame game;
+    public static ChessGame game;
+
+    public static String teamColor = "white";
 
     public static void main(String[] args) throws Exception {
         // var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
@@ -117,6 +119,7 @@ public class ClientMain {
                         } else {
                             game = joinGame(input);
                             if (game != null) {
+                                teamColor = input[2];
                                 playing = true;
                             }
                         }
@@ -143,6 +146,7 @@ public class ClientMain {
                         break;
                 }
             } else if (loggedIn && playing) {
+                BoardPrinter.printBoard();
                 System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
                 String[] input = scanner.nextLine().toLowerCase().split(" ");
                 switch (input[0]) {
