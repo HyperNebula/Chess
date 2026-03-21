@@ -19,16 +19,16 @@ import java.util.Objects;
 public class WebClient {
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
-    private static String MAIN_URL = "http://localhost:8080";
+    private static String mainUrl = "http://localhost:8080";
 
 
     public WebClient(int port) {
-        MAIN_URL = "http://localhost:" + port;
+        mainUrl = "http://localhost:" + port;
     }
 
     public static void clear() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(MAIN_URL + "/db"))
+                .uri(new URI(mainUrl + "/db"))
                 .DELETE()
                 .timeout(java.time.Duration.ofMillis(5000))
                 .build();
@@ -42,7 +42,7 @@ public class WebClient {
         String tempJSONBody = new Gson().toJson(registerRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(MAIN_URL + "/user"))
+                .uri(new URI(mainUrl + "/user"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(tempJSONBody))
                 .timeout(java.time.Duration.ofMillis(5000))
@@ -69,7 +69,7 @@ public class WebClient {
         String tempJSONBody = new Gson().toJson(loginRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(MAIN_URL + "/session"))
+                .uri(new URI(mainUrl + "/session"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(tempJSONBody))
                 .timeout(java.time.Duration.ofMillis(5000))
@@ -92,7 +92,7 @@ public class WebClient {
 
     public static void logout(String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(MAIN_URL + "/session"))
+                .uri(new URI(mainUrl + "/session"))
                 .header("authorization", authToken)
                 .DELETE()
                 .timeout(java.time.Duration.ofMillis(5000))
@@ -112,7 +112,7 @@ public class WebClient {
 
     public static void createGame(String authToken, String[] input) throws Exception{
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(MAIN_URL + "/game"))
+                .uri(new URI(mainUrl + "/game"))
                 .header("authorization", authToken)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{ \"gameName\" : \"" + input[1] + "\" }"))
@@ -133,7 +133,7 @@ public class WebClient {
 
     public static List<DataModel.GameData> listGames(String authToken) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(MAIN_URL + "/game"))
+                .uri(new URI(mainUrl + "/game"))
                 .header("authorization", authToken)
                 .GET()
                 .timeout(java.time.Duration.ofMillis(5000))
@@ -196,7 +196,7 @@ public class WebClient {
         String tempJSONBody = new Gson().toJson(joinRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(MAIN_URL + "/game"))
+                .uri(new URI(mainUrl + "/game"))
                 .header("authorization", authToken)
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(tempJSONBody))
