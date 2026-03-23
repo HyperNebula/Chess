@@ -234,6 +234,11 @@ public class WebClient {
 
         int tempGameID = Integer.parseInt(input[1]);
 
+        if (tempGameID > gameList.size() || tempGameID < 1) {
+            System.out.println(SET_TEXT_COLOR_RED  + "\tID does not correspond with a game." + RESET_TEXT_COLOR);
+            return null;
+        }
+
         return gameList.get(tempGameID-1).game();
     }
 }

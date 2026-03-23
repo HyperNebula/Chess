@@ -176,6 +176,7 @@ public class ClientMain {
                     game = observeGame(authToken, input);
                     if (game != null) {
                         playing = true;
+                        teamColor = "white";
                     }
                 }
                 break;
