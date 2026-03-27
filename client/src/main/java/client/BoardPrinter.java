@@ -2,11 +2,15 @@ package client;
 
 import chess.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
 public class BoardPrinter {
+
+    private static Collection<ChessPosition> validMoves = new ArrayList<>();
 
     private static String choosePieceType(ChessPiece.PieceType pieceType) {
         return switch (pieceType) {
@@ -31,8 +35,14 @@ public class BoardPrinter {
 
     private static String chooseSquareColor(int indexX, int indexY) {
         if ((indexX + indexY) % 2 == 0) {
+            if (validMoves.contains(new ChessPosition(indexX+1, indexY+1))) {
+                return SET_BG_COLOR_GREEN;
+            }
             return SET_BG_COLOR_WHITE;
         } else {
+            if (validMoves.contains(new ChessPosition(indexX+1, indexY+1))) {
+                return SET_BG_COLOR_DARK_GREEN;
+            }
             return SET_BG_COLOR_BLACK;
         }
     }
@@ -74,6 +84,21 @@ public class BoardPrinter {
             System.out.println(SET_BG_COLOR_DARK_GREEN + RESET_TEXT_BOLD_FAINT + RESET_TEXT_COLOR + " " + (actualRow + 1) + " " + RESET_BG_COLOR);
         }
         printEndRow();
+    }
+
+    public static void printValidMoves(int row, int col) {
+        var tempValidMoves = ClientMain.game.validMoves(new ChessPosition(row, col));
+        if (tempValidMoves == null || tempValidMoves.isEmpty()) {
+            printBoard();
+            return;
+        }
+
+        for (ChessMove move : tempValidMoves) {
+            validMoves.add(move.getEndPosition());
+        }
+        printBoard();
+
+        validMoves = new ArrayList<>();
     }
 
 }
