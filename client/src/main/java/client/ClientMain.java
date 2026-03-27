@@ -165,6 +165,7 @@ public class ClientMain {
                     if (game != null) {
                         teamColor = input[2];
                         playing = true;
+                        BoardPrinter.printBoard();
                     }
                 }
                 break;
@@ -177,6 +178,7 @@ public class ClientMain {
                     if (game != null) {
                         playing = true;
                         teamColor = "white";
+                        BoardPrinter.printBoard();
                     }
                 }
                 break;
@@ -196,7 +198,6 @@ public class ClientMain {
     }
 
     private static void playingState(Scanner scanner) {
-        BoardPrinter.printBoard();
         System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
         String[] input = scanner.nextLine().toLowerCase().split(" ");
         switch (input[0]) {
@@ -205,16 +206,75 @@ public class ClientMain {
                 System.exit(0);
                 break;
             case "help":
+                System.out.println(SET_TEXT_COLOR_YELLOW + "\tmove <PIECE> <TARGET SQUARE>" + RESET_TEXT_COLOR
+                        + " - move a piece to a square on the board");
+                System.out.println(SET_TEXT_COLOR_YELLOW + "\tredraw" + RESET_TEXT_COLOR
+                        + " - redraw the chess board in it's current state");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\tleave" + RESET_TEXT_COLOR
                         + " - leave the current game");
+                System.out.println(SET_TEXT_COLOR_YELLOW + "\tresign" + RESET_TEXT_COLOR
+                        + " - forfeit the game");
+                System.out.println(SET_TEXT_COLOR_YELLOW + "\thighlight <PIECE>" + RESET_TEXT_COLOR
+                        + " - highlights all legal moves a piece can make");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\thelp" + RESET_TEXT_COLOR
                         + " - Displays possible commands");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\tquit" + RESET_TEXT_COLOR
                         + " - Exits the program.");
                 break;
+            case "redraw":
+                BoardPrinter.printBoard();
+                break;
             case "leave":
                 loggedIn = true;
                 playing = false;
+                break;
+            case "resign":
+                System.out.print(SET_TEXT_COLOR_RED + "\tAre you sure you want to resign? (type 'yes' or 'no') "  + RESET_TEXT_COLOR);
+
+                String input2;
+                while (true) {
+                    input2 = scanner.nextLine().trim();
+                    if (input2.equalsIgnoreCase("yes") || input2.equalsIgnoreCase("no")) {
+                        break;
+                    }
+                    System.out.print(SET_TEXT_COLOR_RED + "\tPlease only type 'yes' or 'no' " + RESET_TEXT_COLOR);
+                }
+                if (input2.equalsIgnoreCase("yes")) {
+                    //RESIGN
+                    loggedIn = true;
+                    playing = false;
+                }
+                break;
+            case "move":
+                break;
+            case "highlight":
+                if (input.length != 2 || input[1].length() != 2) {
+                    System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
+                            + RESET_TEXT_COLOR);
+                } else {
+                    int pieceLetterPos;
+                    int pieceNumberPos;
+
+                    char pieceLetter = input[1].charAt(0);
+                    if ("abcdefgh".indexOf(pieceLetter) == -1) {
+                        System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
+                                + RESET_TEXT_COLOR);
+                        break;
+                    } else {
+                        pieceLetterPos = "abcdefgh".indexOf(pieceLetter)+1;
+                    }
+
+                    char pieceNumber = input[1].charAt(1);
+                    if (!Character.isDigit(pieceNumber)) {
+                        System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
+                                + RESET_TEXT_COLOR);
+                        break;
+                    } else {
+                        pieceNumberPos = Character.getNumericValue(pieceNumber);
+                    }
+
+                    BoardPrinter.printValidMoves(pieceNumberPos, pieceLetterPos);
+                }
                 break;
             default:
                 System.out.println("\tNot a valid command. Type '" + SET_TEXT_COLOR_GREEN + "help"
