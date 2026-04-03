@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -24,7 +25,7 @@ public class ConnectionManager {
     }
 
     public void broadcast(int gameID, Session excludeSession, ServerMessage notification) throws IOException {
-        String msg = notification.toString();
+        String msg = new Gson().toJson(notification);
 
         var gameConnections = connections.get(gameID);
 

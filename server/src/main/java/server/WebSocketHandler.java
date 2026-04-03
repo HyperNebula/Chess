@@ -1,5 +1,7 @@
 package server;
 
+import chess.ChessGame;
+import chess.InvalidMoveException;
 import io.javalin.websocket.*;
 import model.DataModel;
 import org.jetbrains.annotations.NotNull;
@@ -8,6 +10,8 @@ import com.google.gson.Gson;
 import service.GameService;
 import service.UserService;
 import websocket.commands.UserGameCommand;
+import websocket.commands.MakeMoveCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
@@ -42,13 +46,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             DataModel.AuthData auth = sharedUserService.getAuth(userCommand.getAuthToken());
 
             if (auth == null) {
-                sendError(ctx);
+                sendError(ctx, "Not Authorized");
                 return;
             }
 
             switch (userCommand.getCommandType()) {
                 case CONNECT:
                     connections.add(userCommand.getGameID(), auth.username(), ctx.session);
+
+                    LoadGameMessage loadGameMessage = new LoadGameMessage(LOAD_GAME, sharedGameService.getGame(userCommand.getGameID()).game());
+                    ctx.send(new Gson().toJson(loadGameMessage));
 
                     NotificationMessage connectMsg = new NotificationMessage(NOTIFICATION, auth.username() + " joined the game");
                     connections.broadcast(userCommand.getGameID(), ctx.session, connectMsg);
@@ -63,15 +70,27 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN:
                     break;
                 case MAKE_MOVE:
+                    MakeMoveCommand moveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
+
+                    ChessGame tempGame = sharedGameService.getGame(userCommand.getGameID()).game();
+
+                    try {
+                        tempGame.makeMove(moveCommand.getChessMove());
+                    } catch (InvalidMoveException ex) {
+                        sendError(ctx, ex.getMessage());
+                    }
+
+                    //UPDATE GAME in DB
+
                     break;
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            sendError(ctx, ex.getMessage());
         }
     }
 
-    private void sendError(WsContext ctx) {
-        ctx.send("Error");
+    private void sendError(WsContext ctx, String message) {
+        ctx.send("Error: " + message);
     }
 }
