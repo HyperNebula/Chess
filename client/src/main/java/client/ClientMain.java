@@ -24,6 +24,8 @@ public class ClientMain {
 
     public static String teamColor = "white";
 
+    private static WebSocketClient webSocketClient;
+
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
@@ -252,7 +254,24 @@ public class ClientMain {
                 } else {
                     if ((Objects.equals(teamColor, "white") && game.getTeamTurn() == ChessGame.TeamColor.WHITE) ||
                             (Objects.equals(teamColor, "black") && game.getTeamTurn() == ChessGame.TeamColor.BLACK)) {
-                        break;
+                        ChessPosition parsedPos1 = parsePosition(input[1]);
+
+                        if (parsedPos1 == null) {
+                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE>"
+                                    + RESET_TEXT_COLOR);
+                            break;
+                        }
+
+                        ChessPosition parsedPos2 = parsePosition(input[2]);
+
+                        if (parsedPos2 == null) {
+                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE>"
+                                    + RESET_TEXT_COLOR);
+                            break;
+                        }
+
+                        webSocketClient.makeMove(new ChessMove(parsedPos1, parsedPos2, null));
+
                     } else {
                         System.out.println("\tIt is not your turn.");
                         break;
@@ -263,28 +282,15 @@ public class ClientMain {
                     System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
                             + RESET_TEXT_COLOR);
                 } else {
-                    int pieceLetterPos;
-                    int pieceNumberPos;
+                    ChessPosition parsedPos = parsePosition(input[1]);
 
-                    char pieceLetter = input[1].charAt(0);
-                    if ("abcdefgh".indexOf(pieceLetter) == -1) {
+                    if (parsedPos == null) {
                         System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
                                 + RESET_TEXT_COLOR);
                         break;
-                    } else {
-                        pieceLetterPos = "abcdefgh".indexOf(pieceLetter)+1;
                     }
 
-                    char pieceNumber = input[1].charAt(1);
-                    if (!Character.isDigit(pieceNumber)) {
-                        System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
-                                + RESET_TEXT_COLOR);
-                        break;
-                    } else {
-                        pieceNumberPos = Character.getNumericValue(pieceNumber);
-                    }
-
-                    BoardPrinter.printValidMoves(pieceNumberPos, pieceLetterPos);
+                    BoardPrinter.printValidMoves(parsedPos.getRow(), parsedPos.getColumn());
                 }
                 break;
             default:
@@ -295,7 +301,19 @@ public class ClientMain {
     }
 
     private static ChessPosition parsePosition(String coords) {
+        char pieceLetter = coords.charAt(0);
+        int pieceLetterPos = "abcdefgh".indexOf(pieceLetter) + 1;
+        if (pieceLetterPos == 0) {
+            return null;
+        }
 
+        char pieceNumber = coords.charAt(1);
+        if (!Character.isDigit(pieceNumber)) {
+            return null;
+        }
+        int pieceNumberPos = Character.getNumericValue(pieceNumber);
+
+        return new ChessPosition(pieceNumberPos, pieceLetterPos);
     }
 
     public static boolean isInteger(String str) {
