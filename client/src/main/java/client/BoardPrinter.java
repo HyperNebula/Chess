@@ -33,14 +33,16 @@ public class BoardPrinter {
         }
     }
 
-    private static String chooseSquareColor(int indexX, int indexY) {
-        if ((indexX + indexY) % 2 == 0) {
-            if (validMoves.contains(new ChessPosition(indexX+1, indexY+1))) {
+    private static String chooseSquareColor(int actualRow, int actualCol) {
+        boolean isValidMove = validMoves.contains(new ChessPosition(actualRow + 1, actualCol + 1));
+
+        if ((actualRow + actualCol) % 2 == 1) {
+            if (isValidMove) {
                 return SET_BG_COLOR_GREEN;
             }
             return SET_BG_COLOR_WHITE;
         } else {
-            if (validMoves.contains(new ChessPosition(indexX+1, indexY+1))) {
+            if (isValidMove) {
                 return SET_BG_COLOR_DARK_GREEN;
             }
             return SET_BG_COLOR_BLACK;
@@ -73,11 +75,11 @@ public class BoardPrinter {
 
                 ChessPiece tempPiece = ClientMain.game.getBoard().getPiece(new ChessPosition(actualRow + 1, actualCol + 1));
                 if (tempPiece != null) {
-                    System.out.print(chooseSquareColor(row, col)
+                    System.out.print(chooseSquareColor(actualRow, actualCol)
                             + choosePieceColor(tempPiece.getTeamColor())
                             + choosePieceType(tempPiece.getPieceType()));
                 } else {
-                    System.out.print(chooseSquareColor(row, col) + EMPTYC);
+                    System.out.print(chooseSquareColor(actualRow, actualCol) + EMPTYC);
                 }
             }
 
