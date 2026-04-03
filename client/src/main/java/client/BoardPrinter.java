@@ -11,6 +11,8 @@ import static ui.EscapeSequences.*;
 public class BoardPrinter {
 
     private static Collection<ChessPosition> validMoves = new ArrayList<>();
+    private static int targetPieceX = 10;
+    private static int targetPieceY = 10;
 
     private static String choosePieceType(ChessPiece.PieceType pieceType) {
         return switch (pieceType) {
@@ -35,6 +37,10 @@ public class BoardPrinter {
 
     private static String chooseSquareColor(int actualRow, int actualCol) {
         boolean isValidMove = validMoves.contains(new ChessPosition(actualRow + 1, actualCol + 1));
+
+        if (actualRow+1 == targetPieceX && actualCol+1 == targetPieceY) {
+            return SET_BG_COLOR_YELLOW;
+        }
 
         if ((actualRow + actualCol) % 2 == 1) {
             if (isValidMove) {
@@ -90,6 +96,9 @@ public class BoardPrinter {
 
     public static void printValidMoves(int row, int col) {
         var tempValidMoves = ClientMain.game.validMoves(new ChessPosition(row, col));
+        targetPieceX = row;
+        targetPieceY = col;
+
         if (tempValidMoves == null || tempValidMoves.isEmpty()) {
             printBoard();
             return;
@@ -101,6 +110,8 @@ public class BoardPrinter {
         printBoard();
 
         validMoves = new ArrayList<>();
+        targetPieceX = 10;
+        targetPieceY = 10;
     }
 
 }

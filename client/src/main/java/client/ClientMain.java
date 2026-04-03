@@ -246,7 +246,18 @@ public class ClientMain {
                 }
                 break;
             case "move":
-                break;
+                if (input.length != 3 || input[1].length() != 2 || input[2].length() != 2) {
+                    System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE>"
+                            + RESET_TEXT_COLOR);
+                } else {
+                    if ((Objects.equals(teamColor, "white") && game.getTeamTurn() == ChessGame.TeamColor.WHITE) ||
+                            (Objects.equals(teamColor, "black") && game.getTeamTurn() == ChessGame.TeamColor.BLACK)) {
+                        break;
+                    } else {
+                        System.out.println("\tIt is not your turn.");
+                        break;
+                    }
+                }
             case "highlight":
                 if (input.length != 2 || input[1].length() != 2) {
                     System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
@@ -281,6 +292,10 @@ public class ClientMain {
                         + RESET_TEXT_COLOR + "' for a list of commands.");
                 break;
         }
+    }
+
+    private static ChessPosition parsePosition(String coords) {
+
     }
 
     public static boolean isInteger(String str) {
