@@ -16,6 +16,10 @@ public class GameService {
         this.authDB = authDB;
     }
 
+    public GameData getGame(int gameID) throws DataAccessException {
+        return gameDB.getGame(gameID);
+    }
+
     public GamesResult listGames(GamesRequest gamesRequest) throws DataAccessException {
         AuthData tempAuthData = authDB.getAuth(gamesRequest.authToken());
 
@@ -63,6 +67,10 @@ public class GameService {
 
         return new JoinResult(true);
 
+    }
+
+    public void leaveGame(int gameID, String username) throws DataAccessException {
+        gameDB.leaveGame(gameID, username);
     }
 
     public void deleteAllGames() throws DataAccessException {

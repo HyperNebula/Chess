@@ -86,4 +86,9 @@ public class UserService {
         userDB.deleteAll();
         authDB.deleteAll();
     }
+
+    public AuthData getAuth(String authToken) throws DataAccessException {
+
+        return authDB.getAuth(authToken);
+    }
 }

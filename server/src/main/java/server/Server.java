@@ -24,6 +24,7 @@ public class Server {
         GameService sharedGameService = new GameService(sharedGameDAO, sharedAuthDAO);
 
         ServerHandler sharedServerHandler = new ServerHandler(sharedUserService, sharedGameService);
+        WebSocketHandler sharedWebSocketHandler = new WebSocketHandler(sharedUserService, sharedGameService);
 
         httpHandler = Javalin.create(config -> config.staticFiles.add("web"))
                 .delete("/db", sharedServerHandler::handleClear)
