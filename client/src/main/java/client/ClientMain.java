@@ -29,8 +29,8 @@ public class ClientMain {
     private static ServerNotificationHandler serverNotificationHandler = new ServerNotificationHandler() {
         @Override
         public void notify(String message) {
-            System.out.println("\n[SERVER]: " + message);
-            System.out.print(">>> ");
+            System.out.println("\n" + message);
+            System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
         }
     };
 

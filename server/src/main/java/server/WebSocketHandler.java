@@ -23,6 +23,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private UserService sharedUserService;
     private GameService sharedGameService;
 
+    private final Gson gson = new Gson();
+
     public WebSocketHandler(UserService sharedUserService, GameService sharedGameService) {
         this.sharedUserService = sharedUserService;
         this.sharedGameService = sharedGameService;
@@ -42,7 +44,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(@NotNull WsMessageContext ctx) {
         try {
 
-            UserGameCommand userCommand = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+            UserGameCommand userCommand = gson.fromJson(ctx.message(), UserGameCommand.class);
             DataModel.AuthData auth = sharedUserService.getAuth(userCommand.getAuthToken());
 
             if (auth == null) {
@@ -56,7 +58,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
                     LoadGameMessage loadGameMessage = new LoadGameMessage(LOAD_GAME, sharedGameService.getGame(userCommand.getGameID()).game());
-                    ctx.send(new Gson().toJson(loadGameMessage));
+                    ctx.send(gson.toJson(loadGameMessage));
 
                     NotificationMessage connectMsg = new NotificationMessage(NOTIFICATION, auth.username() + " joined the game");
                     connections.broadcast(userCommand.getGameID(), ctx.session, connectMsg);
@@ -85,7 +87,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
                     break;
                 case MAKE_MOVE:
-                    MakeMoveCommand moveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
+                    MakeMoveCommand moveCommand = gson.fromJson(ctx.message(), MakeMoveCommand.class);
 
                     DataModel.GameData tempGame = sharedGameService.getGame(userCommand.getGameID());
 
@@ -132,6 +134,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void sendError(WsContext ctx, String message) {
         ErrorMessage error = new ErrorMessage(ERROR, message);
-        ctx.send(new Gson().toJson(error));
+        ctx.send(gson.toJson(error));
     }
 }

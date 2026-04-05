@@ -65,6 +65,7 @@ public class BoardPrinter {
     }
 
     public static void printBoard() {
+        System.out.print("");
         printEndRow();
         for (int row = 0; row < 8; row++) {
             int actualRow = row;
