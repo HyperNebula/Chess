@@ -72,15 +72,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case MAKE_MOVE:
                     MakeMoveCommand moveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
 
-                    ChessGame tempGame = sharedGameService.getGame(userCommand.getGameID()).game();
+                    DataModel.GameData tempGame = sharedGameService.getGame(userCommand.getGameID());
 
                     try {
-                        tempGame.makeMove(moveCommand.getChessMove());
+                        tempGame.game().makeMove(moveCommand.getChessMove());
                     } catch (InvalidMoveException ex) {
                         sendError(ctx, ex.getMessage());
                     }
 
-                    //UPDATE GAME in DB
+                    sharedGameService.updateGame(tempGame);
 
                     break;
             }

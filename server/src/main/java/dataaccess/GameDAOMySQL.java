@@ -90,6 +90,26 @@ public class GameDAOMySQL implements GameDAO {
         }
     }
 
+    public void updateGame(GameData game) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, game.whiteUsername());
+                ps.setString(2, game.blackUsername());
+                ps.setString(3, game.gameName());
+
+                String gameJson = new Gson().toJson(game.game());
+                ps.setString(4, gameJson);
+
+                ps.setInt(5, game.gameID());
+
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new DataAccessException(String.format("Error: Unable to update game data: %s", ex.getMessage()), ex);
+        }
+    }
+
     public void leaveGame(int gameID, String username) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
 

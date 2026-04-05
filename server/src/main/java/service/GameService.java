@@ -73,6 +73,10 @@ public class GameService {
         gameDB.leaveGame(gameID, username);
     }
 
+    public void updateGame(GameData game) throws DataAccessException {
+        gameDB.updateGame(game);
+    }
+
     public void deleteAllGames() throws DataAccessException {
         gameDB.deleteAll();
     }

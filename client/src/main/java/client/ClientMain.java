@@ -21,6 +21,7 @@ public class ClientMain {
 
     public static List<DataModel.GameData> listOfGames;
     public static ChessGame game;
+    public static int realGameID;
 
     public static String teamColor = "white";
 
@@ -163,9 +164,11 @@ public class ClientMain {
                     System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "join <ID> [WHITE|BLACK]"
                             + RESET_TEXT_COLOR);
                 } else {
-                    game = joinGame(authToken, username, input);
-                    if (game != null) {
+                    model.DataModel.GameData tempGameData = joinGame(authToken, username, input);
+                    if (tempGameData != null) {
+                        game = tempGameData.game();
                         teamColor = input[2];
+                        realGameID = tempGameData.gameID();
                         playing = true;
                         BoardPrinter.printBoard();
                     }

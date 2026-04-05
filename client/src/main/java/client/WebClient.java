@@ -153,7 +153,7 @@ public class WebClient {
         return null;
     }
 
-    public static ChessGame joinGame(String authToken, String username, String[] input) throws Exception{
+    public static DataModel.GameData joinGame(String authToken, String username, String[] input) throws Exception{
         String teamColor = input[2];
         JoinRequest joinRequest;
 
@@ -180,14 +180,14 @@ public class WebClient {
         if (Objects.equals(teamColor, "white")) {
             if (Objects.equals(gameList.get(tempGameID - 1).whiteUsername(), username)) {
                 System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
-                return gameList.get(tempGameID-1).game();
+                return gameList.get(tempGameID-1);
             } else {
                 joinRequest = new JoinRequest(ChessGame.TeamColor.WHITE, realGameID);
             }
         } else {
             if (Objects.equals(gameList.get(tempGameID - 1).blackUsername(), username)) {
                 System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
-                return gameList.get(tempGameID-1).game();
+                return gameList.get(tempGameID-1);
             } else {
                 joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, realGameID);
             }
@@ -207,7 +207,7 @@ public class WebClient {
 
         if (httpResponse.statusCode() == 200) {
             System.out.println(SET_TEXT_COLOR_GREEN  + "\tSuccessfully joined the game." + RESET_TEXT_COLOR);
-            return gameList.get(tempGameID-1).game();
+            return gameList.get(tempGameID-1);
         } else if (httpResponse.statusCode() == 401) {
             System.out.println(SET_TEXT_COLOR_RED  + "\tNot authorized. Try logging in again." + RESET_TEXT_COLOR);
         } else if (httpResponse.statusCode() == 403) {
