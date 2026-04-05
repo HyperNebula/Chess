@@ -26,9 +26,17 @@ public class ClientMain {
     public static String teamColor = "white";
 
     private static WebSocketClient webSocketClient;
+    private static MessageHandler messageHandler = new MessageHandler() {
+        @Override
+        public void notify(String message) {
+            System.out.println("\n[SERVER]: " + message);
+            System.out.print(">>> ");
+        }
+    };
 
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
+        webSocketClient = new WebSocketClient("http://localhost:8080", messageHandler);
 
         System.out.println("♕ Welcome to CS240 Chess Client. Type '" + SET_TEXT_COLOR_GREEN + "help"
                 + RESET_TEXT_COLOR + "' for a list of commands.");

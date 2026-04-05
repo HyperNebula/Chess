@@ -16,11 +16,10 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class WebClient {
+public class WebClient{
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     private static String mainUrl = "http://localhost:8080";
-
 
     public WebClient(int port) {
         mainUrl = "http://localhost:" + port;

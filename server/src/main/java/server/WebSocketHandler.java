@@ -54,6 +54,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case CONNECT:
                     connections.add(userCommand.getGameID(), auth.username(), ctx.session);
 
+
                     LoadGameMessage loadGameMessage = new LoadGameMessage(LOAD_GAME, sharedGameService.getGame(userCommand.getGameID()).game());
                     ctx.send(new Gson().toJson(loadGameMessage));
 
