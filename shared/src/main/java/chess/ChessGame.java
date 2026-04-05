@@ -225,6 +225,10 @@ public class ChessGame {
         return false;
     }
 
+    public boolean checker() {
+        return (isInCheck(TeamColor.WHITE) || isInStalemate(TeamColor.WHITE) || isInCheck(TeamColor.BLACK) || isInStalemate(TeamColor.BLACK));
+    }
+
     /**
      * Sets this game's chessboard with a given board
      *
