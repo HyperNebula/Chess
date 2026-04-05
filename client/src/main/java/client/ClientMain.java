@@ -112,7 +112,6 @@ public class ClientMain {
     }
 
     private static void loggedInState(Scanner scanner) throws Exception {
-        System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
         String[] input = scanner.nextLine().toLowerCase().split(" ");
 
         switch (input[0]) {
@@ -135,6 +134,7 @@ public class ClientMain {
                         + " - Displays possible commands");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\tquit" + RESET_TEXT_COLOR
                         + " - Exits the program.");
+                System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                 break;
             case "logout":
                 logout(authToken);
@@ -147,10 +147,12 @@ public class ClientMain {
                 listOfGames = tempGameList;
 
                 if (tempGameList == null) {
+                    System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     break;
                 } else if (tempGameList.isEmpty()) {
                     System.out.println("\tNo games created. Used the command '" + SET_TEXT_COLOR_GREEN
                             + "create" + RESET_TEXT_COLOR + "' to create a new game." );
+                    System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     break;
                 } else {
                     System.out.println("\tCreated games and their ID:");
@@ -163,6 +165,7 @@ public class ClientMain {
                                 + (tempGameList.get(i).blackUsername() != null ? tempGameList.get(i).blackUsername() : "None")
                                 + RESET_TEXT_COLOR);
                     }
+                    System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     break;
                 }
             case "join":
@@ -178,9 +181,12 @@ public class ClientMain {
                         teamColor = input[2];
                         realGameID = tempGameData.gameID();
                         playing = true;
+
+                        webSocketClient = new WebSocketClient("http://localhost:8080", serverNotificationHandler);
                         webSocketClient.connect(authToken, realGameID);
                     }
                 }
+                System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                 break;
             case "observe":
                 if (input.length != 2 || !isInteger(input[1])){
@@ -202,6 +208,7 @@ public class ClientMain {
                 } else {
                     createGame(authToken, input);
                 }
+                System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                 break;
             default:
                 System.out.println("\tNot a valid command. Type '" + SET_TEXT_COLOR_GREEN + "help"
