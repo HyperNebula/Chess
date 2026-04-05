@@ -10,7 +10,7 @@ public interface GameDAO {
     List<GameData> listGames() throws DataAccessException;
     void joinGame(GameData game, ChessGame.TeamColor color, String username) throws DataAccessException;
     int createGame(GameData game) throws DataAccessException;
-    void deleteGame(GameData game) throws DataAccessException;
+    void deleteGame(int gameID) throws DataAccessException;
     void deleteAll() throws DataAccessException;
     void leaveGame(int gameID, String username) throws DataAccessException;
     void updateGame(GameData game) throws DataAccessException;

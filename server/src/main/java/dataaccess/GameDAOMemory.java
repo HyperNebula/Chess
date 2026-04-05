@@ -56,8 +56,23 @@ public class GameDAOMemory implements GameDAO{
         return 0;
     }
 
+    @Override
+    public void deleteGame(int gameID) throws DataAccessException {
+
+    }
+
     public void deleteAll() {
         gameDataStorage = new ArrayList<>();
+    }
+
+    @Override
+    public void leaveGame(int gameID, String username) throws DataAccessException {
+
+    }
+
+    @Override
+    public void updateGame(GameData game) throws DataAccessException {
+
     }
 
 }

@@ -110,6 +110,19 @@ public class GameDAOMySQL implements GameDAO {
         }
     }
 
+    public void deleteGame(int gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "DELETE FROM games WHERE gameID = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new DataAccessException(String.format("Error: Unable to delete game data: %s", ex.getMessage()), ex);
+        }
+    }
+
     public void leaveGame(int gameID, String username) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
 
