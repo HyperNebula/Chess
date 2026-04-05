@@ -114,7 +114,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     connections.broadcast(userCommand.getGameID(), ctx.session, moveMsg);
 
                     if (tempGame.game().checker()) {
-                        NotificationMessage stateMsg = new NotificationMessage(NOTIFICATION, auth.username() + " made a move that resulted in a check, checkmate, or stalemate.");
+                        NotificationMessage stateMsg = new NotificationMessage(NOTIFICATION,
+                                auth.username() + " made a move that resulted in a check, checkmate, or stalemate.");
                         connections.broadcast(userCommand.getGameID(), null, stateMsg);
                     }
 
