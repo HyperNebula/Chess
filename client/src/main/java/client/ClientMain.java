@@ -26,7 +26,7 @@ public class ClientMain {
     public static String teamColor = "white";
 
     private static WebSocketClient webSocketClient;
-    private static MessageHandler messageHandler = new MessageHandler() {
+    private static ServerNotificationHandler serverNotificationHandler = new ServerNotificationHandler() {
         @Override
         public void notify(String message) {
             System.out.println("\n[SERVER]: " + message);
@@ -36,7 +36,7 @@ public class ClientMain {
 
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
-        webSocketClient = new WebSocketClient("http://localhost:8080", messageHandler);
+        webSocketClient = new WebSocketClient("http://localhost:8080", serverNotificationHandler);
 
         System.out.println("♕ Welcome to CS240 Chess Client. Type '" + SET_TEXT_COLOR_GREEN + "help"
                 + RESET_TEXT_COLOR + "' for a list of commands.");
@@ -178,7 +178,7 @@ public class ClientMain {
                         teamColor = input[2];
                         realGameID = tempGameData.gameID();
                         playing = true;
-                        BoardPrinter.printBoard();
+                        webSocketClient.connect(authToken, realGameID);
                     }
                 }
                 break;
@@ -191,7 +191,7 @@ public class ClientMain {
                     if (game != null) {
                         playing = true;
                         teamColor = "white";
-                        BoardPrinter.printBoard();
+                        webSocketClient.connect(authToken, realGameID);
                     }
                 }
                 break;
@@ -210,7 +210,7 @@ public class ClientMain {
         }
     }
 
-    private static void playingState(Scanner scanner) {
+    private static void playingState(Scanner scanner) throws Exception {
         System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
         String[] input = scanner.nextLine().toLowerCase().split(" ");
         switch (input[0]) {
@@ -240,6 +240,9 @@ public class ClientMain {
             case "leave":
                 loggedIn = true;
                 playing = false;
+
+                webSocketClient.leave(authToken, realGameID);
+
                 break;
             case "resign":
                 System.out.print(SET_TEXT_COLOR_RED + "\tAre you sure you want to resign? (type 'yes' or 'no') "  + RESET_TEXT_COLOR);
@@ -253,9 +256,10 @@ public class ClientMain {
                     System.out.print(SET_TEXT_COLOR_RED + "\tPlease only type 'yes' or 'no' " + RESET_TEXT_COLOR);
                 }
                 if (input2.equalsIgnoreCase("yes")) {
-                    //RESIGN
                     loggedIn = true;
                     playing = false;
+
+                    webSocketClient.resign(authToken, realGameID);
                 }
                 break;
             case "move":
@@ -281,7 +285,7 @@ public class ClientMain {
                             break;
                         }
 
-                        webSocketClient.makeMove(new ChessMove(parsedPos1, parsedPos2, null));
+                        webSocketClient.makeMove(authToken, realGameID, new ChessMove(parsedPos1, parsedPos2, null));
 
                     } else {
                         System.out.println("\tIt is not your turn.");
