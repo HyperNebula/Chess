@@ -55,12 +55,20 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             switch (userCommand.getCommandType()) {
                 case CONNECT:
                     connections.add(userCommand.getGameID(), auth.username(), ctx.session);
+                    DataModel.GameData gameData = sharedGameService.getGame(userCommand.getGameID());
+
+                    String role = "an observer";
+                    if (Objects.equals(auth.username(), gameData.whiteUsername())) {
+                        role = "White";
+                    } else if (Objects.equals(auth.username(), gameData.blackUsername())) {
+                        role = "Black";
+                    }
 
 
-                    LoadGameMessage loadGameMessage = new LoadGameMessage(LOAD_GAME, sharedGameService.getGame(userCommand.getGameID()).game());
+                    LoadGameMessage loadGameMessage = new LoadGameMessage(LOAD_GAME, gameData.game());
                     ctx.send(gson.toJson(loadGameMessage));
 
-                    NotificationMessage connectMsg = new NotificationMessage(NOTIFICATION, auth.username() + " joined the game");
+                    NotificationMessage connectMsg = new NotificationMessage(NOTIFICATION, auth.username() + " joined the game as" + role + ".");
                     connections.broadcast(userCommand.getGameID(), ctx.session, connectMsg);
 
                     break;
@@ -113,12 +121,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     LoadGameMessage loadGameMsg = new LoadGameMessage(LOAD_GAME, tempGame.game());
                     connections.broadcast(userCommand.getGameID(), null, loadGameMsg);
 
-                    NotificationMessage moveMsg = new NotificationMessage(NOTIFICATION, auth.username() + " made a move.");
+
+                    String moveDetails = moveCommand.getChessMove().getStartPosition().toString() + " to " + moveCommand.getChessMove().getEndPosition().toString();
+                    NotificationMessage moveMsg = new NotificationMessage(NOTIFICATION, auth.username() + " moved " + moveDetails);
                     connections.broadcast(userCommand.getGameID(), ctx.session, moveMsg);
 
-                    if (tempGame.game().checker()) {
-                        NotificationMessage stateMsg = new NotificationMessage(NOTIFICATION,
-                                auth.username() + " made a move that resulted in a check, checkmate, or stalemate.");
+                    ChessGame.TeamColor opponent = tempGame.game().getTeamTurn();
+
+                    if (tempGame.game().isInCheckmate(opponent)) {
+                        NotificationMessage stateMsg = new NotificationMessage(NOTIFICATION, auth.username() + " put the opponent in checkmate! Game over.");
+                        connections.broadcast(userCommand.getGameID(), null, stateMsg);
+                    } else if (tempGame.game().isInCheck(opponent)) {
+                        NotificationMessage stateMsg = new NotificationMessage(NOTIFICATION, auth.username() + " put the opponent in check!");
+                        connections.broadcast(userCommand.getGameID(), null, stateMsg);
+                    } else if (tempGame.game().isInStalemate(opponent)) {
+                        NotificationMessage stateMsg = new NotificationMessage(NOTIFICATION, "The move resulted in a stalemate! Game over.");
                         connections.broadcast(userCommand.getGameID(), null, stateMsg);
                     }
 
