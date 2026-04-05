@@ -9,10 +9,10 @@ import com.google.gson.Gson;
 
 import service.GameService;
 import service.UserService;
-import websocket.commands.UserGameCommand;
-import websocket.commands.MakeMoveCommand;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
+import websocket.commands.*;
+import websocket.messages.*;
+
+import java.util.Objects;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
@@ -67,17 +67,55 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
                     NotificationMessage leaveMsg = new NotificationMessage(NOTIFICATION, auth.username() + " left the game");
                     connections.broadcast(userCommand.getGameID(), ctx.session, leaveMsg);
+
+                    break;
                 case RESIGN:
+                    DataModel.GameData tempResignGame = sharedGameService.getGame(userCommand.getGameID());
+                    if (!Objects.equals(auth.username(), tempResignGame.whiteUsername())
+                            && !Objects.equals(auth.username(), tempResignGame.blackUsername())) {
+                        sendError(ctx, "You are an observer.");
+                        break;
+                    }
+
+                    sharedGameService.deleteGame(userCommand.getGameID());
+
+                    NotificationMessage resignMsg = new NotificationMessage(NOTIFICATION, auth.username() + " resigned from the game");
+                    connections.broadcast(userCommand.getGameID(), null, resignMsg);
+
                     break;
                 case MAKE_MOVE:
                     MakeMoveCommand moveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
 
                     DataModel.GameData tempGame = sharedGameService.getGame(userCommand.getGameID());
 
+                    if (tempGame.game().getTeamTurn() == ChessGame.TeamColor.WHITE) {
+                        if (!Objects.equals(auth.username(), tempGame.whiteUsername())) {
+                            sendError(ctx, "Not your turn.");
+                            break;
+                        }
+                    } else {
+                        if (!Objects.equals(auth.username(), tempGame.blackUsername())) {
+                            sendError(ctx, "Not your turn.");
+                            break;
+                        }
+                    }
+
                     try {
                         tempGame.game().makeMove(moveCommand.getChessMove());
                     } catch (InvalidMoveException ex) {
                         sendError(ctx, ex.getMessage());
+                        break;
+                    }
+
+                    LoadGameMessage loadGameMsg = new LoadGameMessage(LOAD_GAME, tempGame.game());
+                    connections.broadcast(userCommand.getGameID(), null, loadGameMsg);
+
+                    NotificationMessage moveMsg = new NotificationMessage(NOTIFICATION, auth.username() + " made a move.");
+                    connections.broadcast(userCommand.getGameID(), ctx.session, moveMsg);
+
+                    if (tempGame.game().checker()) {
+                        NotificationMessage stateMsg = new NotificationMessage(NOTIFICATION, auth.username() + " made a move that resulted in a check, checkmate, or stalemate.");
+                        connections.broadcast(userCommand.getGameID(), null, stateMsg);
                     }
 
                     sharedGameService.updateGame(tempGame);
@@ -91,6 +129,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void sendError(WsContext ctx, String message) {
-        ctx.send("Error: " + message);
+        ErrorMessage error = new ErrorMessage(ERROR, message);
+        ctx.send(new Gson().toJson(error));
     }
 }

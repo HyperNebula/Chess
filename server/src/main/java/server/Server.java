@@ -37,7 +37,12 @@ public class Server {
                 .exception(AlreadyTakenException.class, sharedServerHandler::exceptionATHandler)
                 .exception(UnauthorizedException.class, sharedServerHandler::exceptionUAHandler)
                 .exception(DataAccessException.class, sharedServerHandler::exceptionDAHandler)
-                .exception(BadRequestException.class, sharedServerHandler::exceptionBRHandler);
+                .exception(BadRequestException.class, sharedServerHandler::exceptionBRHandler)
+                .ws("/ws", ws -> {
+                    ws.onConnect(sharedWebSocketHandler);
+                    ws.onMessage(sharedWebSocketHandler);
+                    ws.onClose(sharedWebSocketHandler);
+                });
     }
 
     public int run(int desiredPort) {
