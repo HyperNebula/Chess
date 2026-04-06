@@ -182,9 +182,6 @@ public class ClientMain {
 
                         webSocketClient = new WebSocketClient("http://localhost:8080", serverNotificationHandler);
                         webSocketClient.connect(authToken, realGameID);
-                    } else {
-                        System.out.println("\tNot a proper game ID");
-                        System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     }
                 }
                 break;
@@ -202,9 +199,6 @@ public class ClientMain {
 
                         webSocketClient = new WebSocketClient("http://localhost:8080", serverNotificationHandler);
                         webSocketClient.connect(authToken, realGameID);
-                    } else {
-                        System.out.println("\tNot a proper game ID");
-                        System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     }
                 }
                 break;
@@ -317,6 +311,7 @@ public class ClientMain {
                                     break;
                                 default:
                                     System.out.println("\tInvalid promotion piece. Valid options: q, r, b, n.");
+                                    System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
                                     break;
                             }
                             if (promotionPiece == null) {
@@ -328,6 +323,7 @@ public class ClientMain {
 
                     } else {
                         System.out.println("\tIt is not your turn.");
+                        System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
                         break;
                     }
                 }

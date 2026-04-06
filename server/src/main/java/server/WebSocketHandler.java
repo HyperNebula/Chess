@@ -91,7 +91,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     sharedGameService.deleteGame(userCommand.getGameID());
 
                     NotificationMessage resignMsg = new NotificationMessage(NOTIFICATION, auth.username() + " resigned from the game");
-                    connections.broadcast(userCommand.getGameID(), null, resignMsg);
+                    connections.broadcast(userCommand.getGameID(), ctx.session, resignMsg);
 
                     connections.remove(userCommand.getGameID(), auth.username(), ctx.session);
 
