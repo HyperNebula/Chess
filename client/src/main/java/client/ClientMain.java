@@ -29,7 +29,7 @@ public class ClientMain {
     private static ServerNotificationHandler serverNotificationHandler = new ServerNotificationHandler() {
         @Override
         public void notify(String message) {
-            System.out.println("\n" + message);
+            System.out.println("\t" + message);
             System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
         }
     };
@@ -112,6 +112,7 @@ public class ClientMain {
     }
 
     private static void loggedInState(Scanner scanner) throws Exception {
+        System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
         String[] input = scanner.nextLine().toLowerCase().split(" ");
 
         switch (input[0]) {
@@ -134,7 +135,6 @@ public class ClientMain {
                         + " - Displays possible commands");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\tquit" + RESET_TEXT_COLOR
                         + " - Exits the program.");
-                System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                 break;
             case "logout":
                 logout(authToken);
@@ -152,7 +152,6 @@ public class ClientMain {
                 } else if (tempGameList.isEmpty()) {
                     System.out.println("\tNo games created. Used the command '" + SET_TEXT_COLOR_GREEN
                             + "create" + RESET_TEXT_COLOR + "' to create a new game." );
-                    System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     break;
                 } else {
                     System.out.println("\tCreated games and their ID:");
@@ -165,7 +164,6 @@ public class ClientMain {
                                 + (tempGameList.get(i).blackUsername() != null ? tempGameList.get(i).blackUsername() : "None")
                                 + RESET_TEXT_COLOR);
                     }
-                    System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     break;
                 }
             case "join":
@@ -184,9 +182,11 @@ public class ClientMain {
 
                         webSocketClient = new WebSocketClient("http://localhost:8080", serverNotificationHandler);
                         webSocketClient.connect(authToken, realGameID);
+                    } else {
+                        System.out.println("\tNot a proper game ID");
+                        System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     }
                 }
-                System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                 break;
             case "observe":
                 if (input.length != 2 || !isInteger(input[1])){
@@ -202,6 +202,9 @@ public class ClientMain {
 
                         webSocketClient = new WebSocketClient("http://localhost:8080", serverNotificationHandler);
                         webSocketClient.connect(authToken, realGameID);
+                    } else {
+                        System.out.println("\tNot a proper game ID");
+                        System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                     }
                 }
                 break;
@@ -212,7 +215,6 @@ public class ClientMain {
                 } else {
                     createGame(authToken, input);
                 }
-                System.out.print(SET_TEXT_COLOR_BLUE + "[LOGGED_IN]" + RESET_TEXT_COLOR + " >>> ");
                 break;
             default:
                 System.out.println("\tNot a valid command. Type '" + SET_TEXT_COLOR_GREEN + "help"
@@ -222,7 +224,6 @@ public class ClientMain {
     }
 
     private static void playingState(Scanner scanner) throws Exception {
-        System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
         String[] input = scanner.nextLine().toLowerCase().split(" ");
         switch (input[0]) {
             case "quit":
@@ -230,8 +231,8 @@ public class ClientMain {
                 System.exit(0);
                 break;
             case "help":
-                System.out.println(SET_TEXT_COLOR_YELLOW + "\tmove <PIECE> <TARGET SQUARE>" + RESET_TEXT_COLOR
-                        + " - move a piece to a square on the board");
+                System.out.println(SET_TEXT_COLOR_YELLOW + "\tmove <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]" + RESET_TEXT_COLOR
+                        + " - move a piece to a square on the board. Add promotion piece (q, r, b, n) if promoting a pawn.");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\tredraw" + RESET_TEXT_COLOR
                         + " - redraw the chess board in it's current state");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\tleave" + RESET_TEXT_COLOR
@@ -244,6 +245,7 @@ public class ClientMain {
                         + " - Displays possible commands");
                 System.out.println(SET_TEXT_COLOR_YELLOW + "\tquit" + RESET_TEXT_COLOR
                         + " - Exits the program.");
+                System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
                 break;
             case "redraw":
                 BoardPrinter.printBoard();
@@ -271,11 +273,13 @@ public class ClientMain {
                     playing = false;
 
                     webSocketClient.resign(authToken, realGameID);
+                } else {
+                    System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
                 }
                 break;
             case "move":
-                if (input.length != 3 || input[1].length() != 2 || input[2].length() != 2) {
-                    System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE>"
+                if ((input.length != 3 && input.length != 4) || input[1].length() != 2 || input[2].length() != 2) {
+                    System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
                             + RESET_TEXT_COLOR);
                 } else {
                     if ((Objects.equals(teamColor, "white") && game.getTeamTurn() == ChessGame.TeamColor.WHITE) ||
@@ -283,7 +287,7 @@ public class ClientMain {
                         ChessPosition parsedPos1 = parsePosition(input[1]);
 
                         if (parsedPos1 == null) {
-                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE>"
+                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
                                     + RESET_TEXT_COLOR);
                             break;
                         }
@@ -291,12 +295,36 @@ public class ClientMain {
                         ChessPosition parsedPos2 = parsePosition(input[2]);
 
                         if (parsedPos2 == null) {
-                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE>"
+                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
                                     + RESET_TEXT_COLOR);
                             break;
                         }
 
-                        webSocketClient.makeMove(authToken, realGameID, new ChessMove(parsedPos1, parsedPos2, null));
+                        ChessPiece.PieceType promotionPiece = null;
+                        if (input.length == 4) {
+                            switch (input[3].toLowerCase()) {
+                                case "q":
+                                    promotionPiece = ChessPiece.PieceType.QUEEN;
+                                    break;
+                                case "r":
+                                    promotionPiece = ChessPiece.PieceType.ROOK;
+                                    break;
+                                case "b":
+                                    promotionPiece = ChessPiece.PieceType.BISHOP;
+                                    break;
+                                case "n":
+                                    promotionPiece = ChessPiece.PieceType.KNIGHT;
+                                    break;
+                                default:
+                                    System.out.println("\tInvalid promotion piece. Valid options: q, r, b, n.");
+                                    break;
+                            }
+                            if (promotionPiece == null) {
+                                break;
+                            }
+                        }
+
+                        webSocketClient.makeMove(authToken, realGameID, new ChessMove(parsedPos1, parsedPos2, promotionPiece));
 
                     } else {
                         System.out.println("\tIt is not your turn.");
@@ -323,6 +351,7 @@ public class ClientMain {
             default:
                 System.out.println("\tNot a valid command. Type '" + SET_TEXT_COLOR_GREEN + "help"
                         + RESET_TEXT_COLOR + "' for a list of commands.");
+                System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
                 break;
         }
     }
