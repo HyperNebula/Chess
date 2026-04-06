@@ -65,7 +65,10 @@ public class BoardPrinter {
     }
 
     public static void printBoard() {
-        System.out.println(ERASE_SCREEN);
+        System.out.println("\n");
+        System.out.println("\n");
+        System.out.println("\n");
+
         printEndRow();
         for (int row = 0; row < 8; row++) {
             int actualRow = row;
@@ -93,6 +96,9 @@ public class BoardPrinter {
             System.out.println(SET_BG_COLOR_DARK_GREEN + RESET_TEXT_BOLD_FAINT + RESET_TEXT_COLOR + " " + (actualRow + 1) + " " + RESET_BG_COLOR);
         }
         printEndRow();
+        System.out.println("\n");
+        System.out.println("\n");
+        System.out.println("\n");
         System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
     }
 

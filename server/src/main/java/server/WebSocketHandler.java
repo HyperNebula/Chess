@@ -93,11 +93,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     NotificationMessage resignMsg = new NotificationMessage(NOTIFICATION, auth.username() + " resigned from the game");
                     connections.broadcast(userCommand.getGameID(), null, resignMsg);
 
+                    connections.remove(userCommand.getGameID(), auth.username(), ctx.session);
+
                     break;
                 case MAKE_MOVE:
                     MakeMoveCommand moveCommand = gson.fromJson(ctx.message(), MakeMoveCommand.class);
 
                     DataModel.GameData tempGame = sharedGameService.getGame(userCommand.getGameID());
+
+                    if (tempGame == null) {
+                        sendError(ctx, "The game has ended.");
+                        break;
+                    }
+
+                    if (!Objects.equals(auth.username(), tempGame.whiteUsername())
+                            && !Objects.equals(auth.username(), tempGame.blackUsername())) {
+                        sendError(ctx, "You are an observer.");
+                        break;
+                    }
 
                     if (tempGame.game().getTeamTurn() == ChessGame.TeamColor.WHITE) {
                         if (!Objects.equals(auth.username(), tempGame.whiteUsername())) {

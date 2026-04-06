@@ -106,10 +106,10 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if (validMoves(move.getStartPosition()) == null) {
-            throw new InvalidMoveException("Invalid move (no piece there): " + move);
+            throw new InvalidMoveException("Invalid move (no piece there)");
         }
         if (gameBoard.getPiece(move.getStartPosition()).getTeamColor() != currentTeam) {
-            throw new InvalidMoveException("Invalid move (not your turn): " + move);
+            throw new InvalidMoveException("Invalid move (not your piece)");
         }
         if (validMoves(move.getStartPosition()).contains(move)) {
             moveAndRemovePiece(move, gameBoard);
