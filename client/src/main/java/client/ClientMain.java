@@ -303,6 +303,7 @@ public class ClientMain {
                         break;
                     }
                 }
+                break;
             case "highlight":
                 if (input.length != 2 || input[1].length() != 2) {
                     System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "highlight <PIECE>"
