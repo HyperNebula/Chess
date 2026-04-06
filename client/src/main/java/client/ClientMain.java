@@ -263,9 +263,6 @@ public class ClientMain {
                     System.out.print(SET_TEXT_COLOR_RED + "\tPlease only type 'yes' or 'no' " + RESET_TEXT_COLOR);
                 }
                 if (input2.equalsIgnoreCase("yes")) {
-                    loggedIn = true;
-                    playing = false;
-
                     webSocketClient.resign(authToken, realGameID);
                 } else {
                     System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
@@ -276,56 +273,48 @@ public class ClientMain {
                     System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
                             + RESET_TEXT_COLOR);
                 } else {
-                    if ((Objects.equals(teamColor, "white") && game.getTeamTurn() == ChessGame.TeamColor.WHITE) ||
-                            (Objects.equals(teamColor, "black") && game.getTeamTurn() == ChessGame.TeamColor.BLACK)) {
-                        ChessPosition parsedPos1 = parsePosition(input[1]);
+                    ChessPosition parsedPos1 = parsePosition(input[1]);
 
-                        if (parsedPos1 == null) {
-                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
-                                    + RESET_TEXT_COLOR);
-                            break;
-                        }
-
-                        ChessPosition parsedPos2 = parsePosition(input[2]);
-
-                        if (parsedPos2 == null) {
-                            System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
-                                    + RESET_TEXT_COLOR);
-                            break;
-                        }
-
-                        ChessPiece.PieceType promotionPiece = null;
-                        if (input.length == 4) {
-                            switch (input[3].toLowerCase()) {
-                                case "q":
-                                    promotionPiece = ChessPiece.PieceType.QUEEN;
-                                    break;
-                                case "r":
-                                    promotionPiece = ChessPiece.PieceType.ROOK;
-                                    break;
-                                case "b":
-                                    promotionPiece = ChessPiece.PieceType.BISHOP;
-                                    break;
-                                case "n":
-                                    promotionPiece = ChessPiece.PieceType.KNIGHT;
-                                    break;
-                                default:
-                                    System.out.println("\tInvalid promotion piece. Valid options: q, r, b, n.");
-                                    System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
-                                    break;
-                            }
-                            if (promotionPiece == null) {
-                                break;
-                            }
-                        }
-
-                        webSocketClient.makeMove(authToken, realGameID, new ChessMove(parsedPos1, parsedPos2, promotionPiece));
-
-                    } else {
-                        System.out.println("\tIt is not your turn.");
-                        System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
+                    if (parsedPos1 == null) {
+                        System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
+                                + RESET_TEXT_COLOR);
                         break;
                     }
+
+                    ChessPosition parsedPos2 = parsePosition(input[2]);
+
+                    if (parsedPos2 == null) {
+                        System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "move <PIECE> <TARGET SQUARE> [PROMOTION PIECE (q,r,b,n)]"
+                                + RESET_TEXT_COLOR);
+                        break;
+                    }
+
+                    ChessPiece.PieceType promotionPiece = null;
+                    if (input.length == 4) {
+                        switch (input[3].toLowerCase()) {
+                            case "q":
+                                promotionPiece = ChessPiece.PieceType.QUEEN;
+                                break;
+                            case "r":
+                                promotionPiece = ChessPiece.PieceType.ROOK;
+                                break;
+                            case "b":
+                                promotionPiece = ChessPiece.PieceType.BISHOP;
+                                break;
+                            case "n":
+                                promotionPiece = ChessPiece.PieceType.KNIGHT;
+                                break;
+                            default:
+                                System.out.println("\tInvalid promotion piece. Valid options: q, r, b, n.");
+                                System.out.print(SET_TEXT_COLOR_BLUE + "[PLAYING]" + RESET_TEXT_COLOR + " >>> ");
+                                break;
+                        }
+                        if (promotionPiece == null) {
+                            break;
+                        }
+                    }
+
+                    webSocketClient.makeMove(authToken, realGameID, new ChessMove(parsedPos1, parsedPos2, promotionPiece));
                 }
                 break;
             case "highlight":
