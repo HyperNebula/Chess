@@ -193,10 +193,14 @@ public class ClientMain {
                     System.out.println("\tProper usage is: " + SET_TEXT_COLOR_YELLOW + "observe <ID>"
                             + RESET_TEXT_COLOR);
                 } else {
-                    game = observeGame(authToken, input);
-                    if (game != null) {
+                    model.DataModel.GameData tempGameData = observeGame(authToken, input);
+                    if (tempGameData != null) {
+                        game = tempGameData.game();
                         playing = true;
                         teamColor = "white";
+                        realGameID = tempGameData.gameID();
+
+                        webSocketClient = new WebSocketClient("http://localhost:8080", serverNotificationHandler);
                         webSocketClient.connect(authToken, realGameID);
                     }
                 }

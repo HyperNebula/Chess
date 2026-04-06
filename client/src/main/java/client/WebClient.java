@@ -219,7 +219,7 @@ public class WebClient{
         return null;
     }
 
-    public static ChessGame observeGame(String authToken, String[] input) throws Exception {
+    public static DataModel.GameData observeGame(String authToken, String[] input) throws Exception {
         List<DataModel.GameData> gameList = listGames(authToken);
 
         if  (gameList == null) {
@@ -238,6 +238,6 @@ public class WebClient{
             return null;
         }
 
-        return gameList.get(tempGameID-1).game();
+        return gameList.get(tempGameID-1);
     }
 }

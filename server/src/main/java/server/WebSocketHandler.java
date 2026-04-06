@@ -68,7 +68,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     LoadGameMessage loadGameMessage = new LoadGameMessage(LOAD_GAME, gameData.game());
                     ctx.send(gson.toJson(loadGameMessage));
 
-                    NotificationMessage connectMsg = new NotificationMessage(NOTIFICATION, auth.username() + " joined the game as" + role + ".");
+                    NotificationMessage connectMsg = new NotificationMessage(NOTIFICATION, auth.username() + " joined the game as " + role + ".");
                     connections.broadcast(userCommand.getGameID(), ctx.session, connectMsg);
 
                     break;
